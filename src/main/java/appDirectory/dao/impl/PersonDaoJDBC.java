@@ -20,8 +20,6 @@ public class PersonDaoJDBC implements PersonDao {
 
     private DataSource dataSource ;
 
-    private Connection connection ;
-
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
