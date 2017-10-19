@@ -1,7 +1,6 @@
 package appDirectory.utils;
 
 import appDirectory.exception.DAOMapperException;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 

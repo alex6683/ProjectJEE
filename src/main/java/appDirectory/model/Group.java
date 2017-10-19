@@ -7,7 +7,12 @@ import java.util.ArrayList;
 
 public class Group implements Serializable {
 
-    private String identifier ;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String identifier ;
 
     private String name ;
 

@@ -2,7 +2,12 @@ package appDirectory.exception;
 
 public class DAOConfigurationException extends RuntimeException {
 
-    public DAOConfigurationException( String message ) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public DAOConfigurationException( String message ) {
         super( message );
     }
 
