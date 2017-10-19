@@ -2,7 +2,12 @@ package appDirectory.exception;
 
 public class DAOMapperException extends DAOException {
 
-    public DAOMapperException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public DAOMapperException(String message) {
         super(message);
     }
 

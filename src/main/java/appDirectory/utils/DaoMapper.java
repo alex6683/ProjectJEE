@@ -1,9 +1,6 @@
 package appDirectory.utils;
 
 import appDirectory.exception.DAOMapperException;
-import appDirectory.model.Group;
-import appDirectory.model.Person;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
@@ -49,7 +46,7 @@ class DaoMapper {
      * @return L'instance en question
      * @throws DAOMapperException Si une exception de type Instantiation, IllegalAccess ou NoSuchField est levée
      */
-    static Object mapToInstance(Class theClass, HashMap<String, String> map) throws DAOMapperException {
+    static Object mapToInstance(Class<?> theClass, HashMap<String, String> map) throws DAOMapperException {
         //Création de l'instance de theClass
         Object instance ;
         try {
