@@ -1,8 +1,6 @@
 package appDirectory.utils;
 
 import appDirectory.exception.DAOMapperException;
-import appDirectory.model.Group;
-import appDirectory.model.Person;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -16,7 +14,7 @@ import java.util.HashMap;
  * @date 19/10/2017
  * @version 1.0
  */
-class DaoMapper {
+public class DaoMapper {
 
     /**
      * Retourne une map qui liste tous les attributs d'un objet passé en paramètre, et leur valeur respective.
@@ -25,7 +23,7 @@ class DaoMapper {
      * @return La map correspondante
      * @throws DAOMapperException Si une exception de type IllegalAccess est levée
      */
-    static HashMap<String, String> instanceToMap(Object instance) throws DAOMapperException {
+    public static HashMap<String, String> instanceToMap(Object instance) throws DAOMapperException {
         HashMap<String, String> mapPerson = new HashMap<>() ;
         try {
             for(Field field : instance.getClass().getDeclaredFields()) {
@@ -49,7 +47,7 @@ class DaoMapper {
      * @return L'instance en question
      * @throws DAOMapperException Si une exception de type Instantiation, IllegalAccess ou NoSuchField est levée
      */
-    static Object mapToInstance(Class theClass, HashMap<String, String> map) throws DAOMapperException {
+    public static Object mapToInstance(Class<?> theClass, HashMap<String, String> map) throws DAOMapperException {
         //Création de l'instance de theClass
         Object instance ;
         try {
