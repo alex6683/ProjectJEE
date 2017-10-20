@@ -2,9 +2,7 @@ package appDirectory.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
-import java.util.Date;
 
 public class Person implements Serializable {
 
@@ -23,7 +21,7 @@ public class Person implements Serializable {
 
     private String webSite ;
 
-    private Date dateBirth ;
+    private String dateBirth ;
 
     private String password ;
 
@@ -80,11 +78,11 @@ public class Person implements Serializable {
         this.webSite = webSite;
     }
 
-    public Date getDateBirth() {
+    public String getDateBirth() {
         return dateBirth;
     }
 
-    public void setDateBirth(Date dateBirth) {
+    public void setDateBirth(String dateBirth) {
         this.dateBirth = dateBirth;
     }
 
