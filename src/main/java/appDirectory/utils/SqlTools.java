@@ -62,7 +62,8 @@ public class SqlTools {
     }
 
     /**
-     * TODO: tester le nombre d'argument == nombre de '?' sinon error
+     *
+     *
      * @param sql
      * @param params
      * @return
