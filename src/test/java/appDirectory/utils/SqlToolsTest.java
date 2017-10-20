@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.sql.DataSource;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -26,6 +27,7 @@ public class SqlToolsTest {
     @Before
     public void setUp() throws Exception {
         connection = DataSourceUtils.getConnection(dataSource) ;
+        connection.setAutoCommit(false);
     }
 
     @After
@@ -38,7 +40,23 @@ public class SqlToolsTest {
         SqlTools sql = new SqlTools() ;
         sql.setConnection(connection);
         ArrayList<ArrayList<String>> table = sql.selectQuery("select * from Person") ;
-        System.out.println("data = " + table);
     }
 
+    @Test
+    public void updateQueryTest() throws Exception {
+        SqlTools sql = new SqlTools() ;
+        sql.setConnection(connection);
+        //Test d'insertion SQL avec parametres
+        int result = sql.updateQuery(
+                "insert into Person" +
+                        " (name, surname, groupID) values" +
+                        " (?, ?, ?)",
+                "nameTest",
+                "surnameTest",
+                "1"
+        ) ;
+        assertEquals(1, result) ;
+
+
+    }
 }

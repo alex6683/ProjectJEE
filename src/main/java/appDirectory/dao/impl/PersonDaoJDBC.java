@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
 

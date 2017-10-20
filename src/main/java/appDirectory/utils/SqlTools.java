@@ -3,6 +3,7 @@ package appDirectory.utils;
 import appDirectory.exception.DAOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,10 +29,23 @@ public class SqlTools {
         this.connection = connection;
     }
 
-    public ArrayList<ArrayList<String>> selectQuery(String sql) {
+    /**
+     *
+     * @param sql
+     * @return
+     */
+    public ArrayList<ArrayList<String>> selectQuery(String sql, Object... params) {
+        if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
+            throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
+        }
         ArrayList<ArrayList<String>> table = new ArrayList<>() ;
         try {
             PreparedStatement query = connection.prepareStatement(sql) ;
+            int comptParam = 1 ;
+            for(Object param : params) {
+                query.setObject(comptParam, param);
+                comptParam ++ ;
+            }
             ResultSet result = query.executeQuery() ;
             ResultSetMetaData metadata = result.getMetaData() ;
             while(result.next()) {
@@ -42,14 +56,34 @@ public class SqlTools {
                 table.add(row) ;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DAOException(e) ;
         }
         return table ;
     }
 
-    public void updateQuery(String sql, Object... params) {
-
+    /**
+     * TODO: tester le nombre d'argument == nombre de '?' sinon error
+     * @param sql
+     * @param params
+     * @return
+     */
+    public int updateQuery(String sql, Object... params) {
+        if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
+            throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
+        }
+        int result ;
+        try {
+            PreparedStatement query = connection.prepareStatement(sql) ;
+            int comptParam = 1 ;
+            for(Object param : params) {
+                query.setObject(comptParam, param);
+                comptParam ++ ;
+            }
+            result = query.executeUpdate() ;
+        } catch (SQLException e) {
+            throw new DAOException(e) ;
+        }
+        return result ;
     }
 
 }
