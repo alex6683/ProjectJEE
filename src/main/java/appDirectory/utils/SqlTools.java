@@ -37,11 +37,12 @@ public class SqlTools {
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
         }
+        if(connection == null) {
+            throw new NullPointerException("Non connecté à la BD");
+        }
         ArrayList<ArrayList<String>> table = new ArrayList<>() ;
         try {
-        	if(connection == null) {
-        		throw new NullPointerException("Non connecté à la BD");
-        	}
+
             PreparedStatement query = connection.prepareStatement(sql) ;
             int comptParam = 1 ;
             for(Object param : params) {
@@ -73,6 +74,9 @@ public class SqlTools {
     public int updateQuery(String sql, Object... params) {
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
+        }
+        if(connection == null) {
+            throw new NullPointerException("Non connecté à la BD");
         }
         int result ;
         try {

@@ -48,21 +48,15 @@ public class SqlToolsTest {
     public void executeQueryTest() throws Exception {
 
         SqlTools sqlTool = new SqlTools() ;
-        System.out.println("Avant le setConn : ");
         sqlTool.setConnection(connection);
-        System.out.println("Après le setConn : ");
-        ArrayList<ArrayList<String>> tableToTest = sqlTool.selectQuery("select * from `Group`");
-        
-        System.out.println("Avant le try : " + tableToTest);
-        
+        ArrayList<ArrayList<String>> tableToTest = sqlTool.selectQuery("select * from Person");
         try {
-            PreparedStatement query = connection.prepareStatement("select * from `Group`") ;
+            PreparedStatement query = connection.prepareStatement("select * from Person") ;
             ResultSet result = query.executeQuery() ;
             ResultSetMetaData metadata = result.getMetaData() ;
-           
             while(result.next()) {
                 for(int i=1 ; i<=metadata.getColumnCount() ; i++) {
-                    assertEquals(result.getString(i), tableToTest.get(result.getRow()).get(i -1));
+                    assertEquals(result.getString(i), tableToTest.get(result.getRow()-1).get(i -1));
                 }                    
             }
         } catch (SQLException e) {
