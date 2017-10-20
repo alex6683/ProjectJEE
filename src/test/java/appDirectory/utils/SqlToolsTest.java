@@ -64,9 +64,70 @@ public class SqlToolsTest {
         	throw new DAOException(e) ;
         }
     }
+    
+    @Test(expected = DAOException.class)
+    public void selectQueryTooMuchArgumentsTest() {
+    	SqlTools sql = new SqlTools();
+    	sql.setConnection(connection);
+    	ArrayList<ArrayList<String>> result  = sql.selectQuery(
+    			"select " +
+						"(GroupId, name) values" +
+						"(?, ?)",		
+						"GroupId" , 
+						"name" ,
+						"fake" +
+						"from `Group`"
+    	);
+    }
+    
+    @Test(expected = DAOException.class)
+    public void selectQueryTooFewArgumentsTest() {
+    	SqlTools sql = new SqlTools();
+    	sql.setConnection(connection);
+    	ArrayList<ArrayList<String>> result  = sql.selectQuery(
+    			"select " +
+						"(GroupId, name) values" +
+						"(?, ?)",		
+						"GroupId" +
+						"from `Group`"
+    	);
+    }
+    
+    @Test(expected = DAOException.class)
+    public void selectQuerySqlSyntaxExceptionTest() {
+    	SqlTools sql = new SqlTools();
+    	sql.setConnection(connection);
+    	ArrayList<ArrayList<String>> result  = sql.selectQuery(
+    			"select " +
+						"(GroupId, name) values" +
+						"(?, ?)",		
+						"GroupId" ,
+						"name" +
+						"from Group"
+    	);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void selectQueryConnectionNullTest() {
+    	SqlTools sql = new SqlTools();
+    	sql.selectQuery("select * from Person");
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void updateQueryConnectionNullTest() {
+    	SqlTools sql = new SqlTools();
+    	sql.updateQuery(
+                "insert into Person" +
+                        " (name, surname, groupID) values" +
+                        " (?, ?, ?)",
+                "nameTest",
+                "surnameTest",
+                "emailTest"
+        ) ;
+    }
 
     @Test(expected = DAOException.class)
-    public void updateQueryTooMuchArguments() {
+    public void updateQueryTooMuchArgumentsTest() {
         SqlTools sql = new SqlTools() ;
         sql.setConnection(connection);
         int result = sql.updateQuery(
@@ -81,7 +142,7 @@ public class SqlToolsTest {
     }
 
     @Test(expected = DAOException.class)
-    public void updateQueryTooFewArguments() {
+    public void updateQueryTooFewArgumentsTest() {
         SqlTools sql = new SqlTools() ;
         sql.setConnection(connection);
         int result = sql.updateQuery(
@@ -93,7 +154,7 @@ public class SqlToolsTest {
     }
 
     @Test(expected = DAOException.class)
-    public void updateQuerySQLError() {
+    public void updateQuerySQLErrorTest() {
         SqlTools sql = new SqlTools() ;
         sql.setConnection(connection);
         //Erreur de synthaxe SQL
