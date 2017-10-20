@@ -31,6 +31,9 @@ public class SqlTools {
     public ArrayList<ArrayList<String>> selectQuery(String sql) {
         ArrayList<ArrayList<String>> table = new ArrayList<>() ;
         try {
+        	if(connection == null) {
+        		throw new NullPointerException("Non connecté à la BD");
+        	}
             PreparedStatement query = connection.prepareStatement(sql) ;
             ResultSet result = query.executeQuery() ;
             ResultSetMetaData metadata = result.getMetaData() ;
