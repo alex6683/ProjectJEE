@@ -5,13 +5,17 @@ import appDirectory.exception.DAOException;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
 import appDirectory.utils.DaoMapper;
+import appDirectory.utils.SqlTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 @Repository
@@ -34,9 +38,29 @@ public class PersonDaoJDBC implements PersonDao {
 
     }
 
-    public void addPerson(Person person) throws DAOException {
+    public int addPerson(Person person) throws DAOException {
         HashMap<String, String> personMap = DaoMapper.instanceToMap(person) ;
-
+        SqlTools sql = new SqlTools() ;
+        sql.setConnection(DataSourceUtils.getConnection(dataSource));
+        StringBuilder query = new StringBuilder("insert into Person (") ;
+        for(String column : personMap.keySet()) {
+            query.append(column).append(", ") ;
+        }
+        query.deleteCharAt(query.lastIndexOf(", ")).append(") values (") ;
+        for(String value : personMap.values()) {
+            if(!value.equals("null")) {
+                System.out.println("value = " + value);
+                query.append("'").append(value).append("'").append(", ");
+            }
+            else {
+                query.append("null").append(", ");
+            }
+        }
+        query.deleteCharAt(query.lastIndexOf(", ")).append(")") ;
+        System.out.println("query.toString() = " + query.toString());
+        int result = sql.updateQuery(query.toString()) ;
+        System.out.println(sql.selectQuery("select * from Person where name like '%Test%' ")) ;
+        return result ;
     }
 
     public void addGroup(Group group) throws DAOException {

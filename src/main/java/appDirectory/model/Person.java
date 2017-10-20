@@ -2,7 +2,9 @@ package appDirectory.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
+import java.util.Date;
 
 public class Person implements Serializable {
 
@@ -23,9 +25,9 @@ public class Person implements Serializable {
 
     private String dateBirth ;
 
-    private String password ;
+    private String password = "admin" ;
 
-    private Group group ;
+    private String groupID ;
 
     public void init() {
         setName(null);
@@ -33,7 +35,7 @@ public class Person implements Serializable {
         setEmail("prenom.nom@etu.univ-amu.fr");
         setWebSite(null);
         setDateBirth(null);
-        setPassword(null);
+        setPassword("admin");
         setGroup(null);
     }
 
@@ -94,11 +96,11 @@ public class Person implements Serializable {
         this.password = password;
     }
 
-    public Group getGroup() {
-        return group;
+    public String getGroup() {
+        return groupID;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroup(String group) {
+        this.groupID = group;
     }
 }

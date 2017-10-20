@@ -12,7 +12,7 @@ public interface PersonDao {
 
     void destroy() ;
 
-    void addPerson(Person person) throws DAOException ;
+    int addPerson(Person person) throws DAOException ;
 
     void updateIfExist(Object object) throws DAOException ;
 

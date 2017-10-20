@@ -18,7 +18,7 @@ public class DaoMapper {
     /**
      * Retourne une map qui liste tous les attributs d'un objet passé en paramètre, et leur valeur respective.
      *
-     * @param instance L'objet dont qui sera mapper
+     * @param instance L'objet qui sera mapper
      * @return La map correspondante
      * @throws DAOMapperException Si une exception de type IllegalAccess est levée
      */
@@ -26,9 +26,11 @@ public class DaoMapper {
         HashMap<String, String> mapPerson = new HashMap<>() ;
         try {
             for(Field field : instance.getClass().getDeclaredFields()) {
-                field.setAccessible(true);
-                mapPerson.put(field.getName(), String.valueOf(field.get(instance))) ;
-                field.setAccessible(false);
+                if(!field.getName().equals("identifier") && !field.getName().equals("serialVersionUID")) {
+                    field.setAccessible(true);
+                    mapPerson.put(field.getName(), String.valueOf(field.get(instance))) ;
+                    field.setAccessible(false);
+                }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
