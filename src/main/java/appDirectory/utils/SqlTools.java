@@ -39,6 +39,9 @@ public class SqlTools {
         }
         ArrayList<ArrayList<String>> table = new ArrayList<>() ;
         try {
+        	if(connection == null) {
+        		throw new NullPointerException("Non connecté à la BD");
+        	}
             PreparedStatement query = connection.prepareStatement(sql) ;
             int comptParam = 1 ;
             for(Object param : params) {
