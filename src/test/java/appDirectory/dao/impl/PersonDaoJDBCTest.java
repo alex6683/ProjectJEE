@@ -1,5 +1,7 @@
 package appDirectory.dao.impl;
 
+import appDirectory.model.Group;
+import appDirectory.model.Person;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,33 +16,37 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/spring/dao.xml")
+@ContextConfiguration(locations = "/spring/spring.xml")
 public class PersonDaoJDBCTest {
 
     @Autowired
     ApplicationContext context ;
 
     @Autowired
-    DataSource dataSource ;
+    PersonDaoJDBC daoJDBC ;
 
-    Connection connect ;
+    @Autowired
+    Person person ;
 
     @Before
     public void setUp() throws Exception {
-        connect = DataSourceUtils.getConnection(dataSource) ;
+        person.setIdentifier("1");
+        person.setName("testNameJDBC");
+        person.setGroup("1");
     }
 
     @After
     public void tearDown() throws Exception {
-        DataSourceUtils.releaseConnection(connect, dataSource);
+
     }
 
     @Test
-    public void addPerson() throws Exception {
+    public void addPersonTest() throws Exception {
+        daoJDBC.addPerson(person);
     }
 
     @Test
-    public void addGroup() throws Exception {
+    public void addGroupTest() throws Exception {
     }
 
     @Test

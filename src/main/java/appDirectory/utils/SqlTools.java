@@ -72,6 +72,7 @@ public class SqlTools {
      * @return
      */
     public int updateQuery(String sql, Object... params) {
+        System.out.println("params = " + params.length);
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
         }
