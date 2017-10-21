@@ -2,18 +2,14 @@ package appDirectory.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Date;
 
 public class Person implements Serializable {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	private String identifier ;
+	private Integer identifier ;
 
     private String name ;
 
@@ -23,11 +19,13 @@ public class Person implements Serializable {
 
     private String webSite ;
 
-    private String dateBirth ;
+    private Date dateBirth ;
 
     private String password = "admin" ;
 
-    private String groupID ;
+    private String description ;
+
+    private Integer groupID ;
 
     public void init() {
         setName(null);
@@ -36,15 +34,16 @@ public class Person implements Serializable {
         setWebSite(null);
         setDateBirth(null);
         setPassword("admin");
-        setGroup(null);
+        setGroupID(null);
+        setDescription("");
     }
 
-    public String getIdentifier() {
+    public Integer getIdentifier() {
         return identifier;
     }
 
     @Required
-    public void setIdentifier(String identifier) {
+    public void setIdentifier(Integer identifier) {
         this.identifier = identifier;
     }
 
@@ -80,11 +79,11 @@ public class Person implements Serializable {
         this.webSite = webSite;
     }
 
-    public String getDateBirth() {
+    public Date getDateBirth() {
         return dateBirth;
     }
 
-    public void setDateBirth(String dateBirth) {
+    public void setDateBirth(Date dateBirth) {
         this.dateBirth = dateBirth;
     }
 
@@ -96,11 +95,19 @@ public class Person implements Serializable {
         this.password = password;
     }
 
-    public String getGroup() {
+    public Integer getGroupID() {
         return groupID;
     }
 
-    public void setGroup(String group) {
-        this.groupID = group;
+    public void setGroupID(Integer groupID) {
+        this.groupID = groupID;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

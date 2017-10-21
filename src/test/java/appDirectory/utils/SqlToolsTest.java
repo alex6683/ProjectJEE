@@ -45,23 +45,23 @@ public class SqlToolsTest {
     }
 
     @Test
-    public void executeQueryTest() throws Exception {
-
+    public void selectQueryTest() throws DAOException {
         SqlTools sqlTool = new SqlTools() ;
         sqlTool.setConnection(connection);
-        ArrayList<ArrayList<String>> tableToTest = sqlTool.selectQuery("select * from Person");
-        try {
-            PreparedStatement query = connection.prepareStatement("select * from Person") ;
-            ResultSet result = query.executeQuery() ;
+        ArrayList<ArrayList<Object>> tableToTest = sqlTool.selectQuery("select * from Person");
+        try(
+                PreparedStatement query = connection.prepareStatement("select * from Person") ;
+                ResultSet result = query.executeQuery()
+        ){
             ResultSetMetaData metadata = result.getMetaData() ;
             while(result.next()) {
                 for(int i=1 ; i<=metadata.getColumnCount() ; i++) {
-                    assertEquals(result.getString(i), tableToTest.get(result.getRow()-1).get(i -1));
-                }                    
+                    assertEquals(result.getObject(i), tableToTest.get(result.getRow()-1).get(i -1));
+                }
             }
         } catch (SQLException e) {
-        	e.printStackTrace();
-        	throw new DAOException(e) ;
+            e.printStackTrace();
+            throw new DAOException(e) ;
         }
     }
 
@@ -123,11 +123,11 @@ public class SqlToolsTest {
         //Vérifie l'insertion d'une ligne dans la base de donnée
         assertEquals(1, result) ;
 
-        ArrayList<ArrayList<String>> resulset = sql.selectQuery("select name, surname, groupID from Person where name = 'nameTest'") ;
-        ArrayList<String> expected = new ArrayList<>() ;
+        ArrayList<ArrayList<Object>> resulset = sql.selectQuery("select name, surname, groupID from Person where name = 'nameTest'") ;
+        ArrayList<Object> expected = new ArrayList<>() ;
         expected.add("nameTest") ;
         expected.add("surnameTest") ;
-        expected.add("1") ;
+        expected.add(1) ;
 
         //Vérifie l'intégrité de la ligne insérée
         assertEquals(expected, resulset.get(0));

@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.Date;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -30,12 +31,12 @@ public class DaoMapperTest {
 
     @Test
     public void instanceToMapTest() {
-        HashMap<String, String> mapToTest = DaoMapper.instanceToMap(person) ;
+        HashMap<String, Object> mapToTest = DaoMapper.instanceToMap(person) ;
 
         //Création de l'instance Person sans injection pour comparer les maps
         Person personToMap = new Person() ;
         personToMap.init();
-        personToMap.setIdentifier("-1");
+        personToMap.setIdentifier(-1);
 
         assertEquals(mapToTest, DaoMapper.instanceToMap(personToMap));
 
@@ -45,14 +46,14 @@ public class DaoMapperTest {
 
     @Test
     public void mapToInstanceTest() {
-        HashMap<String, String> mapToObject = new HashMap<>() ;
-        mapToObject.put("identifier", "1") ;
+        HashMap<String, Object> mapToObject = new HashMap<>() ;
+        mapToObject.put("identifier", 1) ;
         mapToObject.put("name", "MESTRALLET") ;
         mapToObject.put("surname", "Alexis") ;
-        mapToObject.put("dateBirth", null) ;
+        mapToObject.put("dateBirth", Date.valueOf("1995-01-01")) ;
         mapToObject.put("webSite", "") ;
         mapToObject.put("password", null) ;
-        mapToObject.put("group", null) ;
+        mapToObject.put("groupID", null) ;
 
         Person personToTest = (Person) DaoMapper.mapToInstance(Person.class, mapToObject);
 
@@ -66,7 +67,7 @@ public class DaoMapperTest {
 
     @Test(expected = DAOMapperException.class)
     public void mapToInstanceNoSuchField() {
-        HashMap<String, String> fieldNotExist = new HashMap<>() ;
+        HashMap<String, Object> fieldNotExist = new HashMap<>() ;
         fieldNotExist.put("notExist", "value") ;
         DaoMapper.mapToInstance(Person.class, fieldNotExist) ;
     }

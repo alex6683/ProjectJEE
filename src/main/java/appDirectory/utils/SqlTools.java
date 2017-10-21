@@ -33,17 +33,15 @@ public class SqlTools {
      * @param sql
      * @return
      */
-    public ArrayList<ArrayList<String>> selectQuery(String sql, Object... params) {
+    public ArrayList<ArrayList<Object>> selectQuery(String sql, Object... params) {
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
         }
         if(connection == null) {
             throw new NullPointerException("Non connecté à la BD");
         }
-        ArrayList<ArrayList<String>> table = new ArrayList<>() ;
-        try {
-
-            PreparedStatement query = connection.prepareStatement(sql) ;
+        ArrayList<ArrayList<Object>> table = new ArrayList<>() ;
+        try(PreparedStatement query = connection.prepareStatement(sql)) {
             int comptParam = 1 ;
             for(Object param : params) {
                 query.setObject(comptParam, param);
@@ -52,15 +50,17 @@ public class SqlTools {
             ResultSet result = query.executeQuery() ;
             ResultSetMetaData metadata = result.getMetaData() ;
             while(result.next()) {
-                ArrayList<String> row = new ArrayList<>() ;
+                ArrayList<Object> row = new ArrayList<>() ;
                 for(int i=1 ; i<=metadata.getColumnCount() ; i++) {
-                    row.add(result.getString(i));
+                    row.add(result.getObject(i));
                 }
                 table.add(row) ;
             }
+            result.close();
         } catch (SQLException e) {
-            throw new DAOException(e) ;
+            throw new DAOException(e);
         }
+
         return table ;
     }
 
@@ -72,7 +72,6 @@ public class SqlTools {
      * @return
      */
     public int updateQuery(String sql, Object... params) {
-        System.out.println("params = " + params.length);
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
         }

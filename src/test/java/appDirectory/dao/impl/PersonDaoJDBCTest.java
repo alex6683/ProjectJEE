@@ -30,9 +30,9 @@ public class PersonDaoJDBCTest {
 
     @Before
     public void setUp() throws Exception {
-        person.setIdentifier("1");
+        person.setIdentifier(1);
         person.setName("testNameJDBC");
-        person.setGroup("1");
+        person.setGroupID(1);
     }
 
     @After

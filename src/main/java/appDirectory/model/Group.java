@@ -12,7 +12,7 @@ public class Group implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String identifier ;
+	private Integer identifier ;
 
     private String name ;
 
@@ -23,12 +23,12 @@ public class Group implements Serializable {
         setPersons(new ArrayList<Person>());
     }
 
-    public String getIdentifier() {
+    public Integer getIdentifier() {
         return identifier;
     }
 
     @Required
-    public void setIdentifier(String identifier) {
+    public void setIdentifier(Integer identifier) {
         this.identifier = identifier;
     }
 

@@ -22,13 +22,13 @@ public class DaoMapper {
      * @return La map correspondante
      * @throws DAOMapperException Si une exception de type IllegalAccess est levée
      */
-    public static HashMap<String, String> instanceToMap(Object instance) throws DAOMapperException {
-        HashMap<String, String> mapPerson = new HashMap<>() ;
+    public static HashMap<String, Object> instanceToMap(Object instance) throws DAOMapperException {
+        HashMap<String, Object> mapPerson = new HashMap<>() ;
         try {
             for(Field field : instance.getClass().getDeclaredFields()) {
                 if(!field.getName().equals("identifier") && !field.getName().equals("serialVersionUID")) {
                     field.setAccessible(true);
-                    mapPerson.put(field.getName(), String.valueOf(field.get(instance))) ;
+                    mapPerson.put(field.getName(), field.get(instance)) ;
                     field.setAccessible(false);
                 }
             }
@@ -48,7 +48,7 @@ public class DaoMapper {
      * @return L'instance en question
      * @throws DAOMapperException Si une exception de type Instantiation, IllegalAccess ou NoSuchField est levée
      */
-    public static Object mapToInstance(Class<?> theClass, HashMap<String, String> map) throws DAOMapperException {
+    public static Object mapToInstance(Class<?> theClass, HashMap<String, Object> map) throws DAOMapperException {
         //Création de l'instance de theClass
         Object instance ;
         try {
@@ -59,7 +59,7 @@ public class DaoMapper {
         }
         //Affectation des attributs
         for(String key : map.keySet()) {
-            String value = map.get(key);
+            Object value = map.get(key);
             try {
                 Field field = instance.getClass().getDeclaredField(key);
                 field.setAccessible(true);

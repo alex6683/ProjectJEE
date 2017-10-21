@@ -26,4 +26,8 @@ public interface PersonDao {
 
     Group findGroup(int idGroup) throws DAOException ;
 
+    void deletePerson(Person person) ;
+
+    void deleteGroup(Group group) ;
+
 }

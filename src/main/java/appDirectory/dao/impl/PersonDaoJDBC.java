@@ -13,9 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 
 @Repository
@@ -39,7 +37,7 @@ public class PersonDaoJDBC implements PersonDao {
     }
 
     public int addPerson(Person person) throws DAOException {
-        HashMap<String, String> personMap = DaoMapper.instanceToMap(person) ;
+        HashMap<String, Object> personMap = DaoMapper.instanceToMap(person) ;
         SqlTools sql = new SqlTools() ;
         sql.setConnection(DataSourceUtils.getConnection(dataSource));
         StringBuilder query = new StringBuilder("insert into Person (") ;
@@ -47,7 +45,7 @@ public class PersonDaoJDBC implements PersonDao {
             query.append(column).append(", ") ;
         }
         query.deleteCharAt(query.lastIndexOf(", ")).append(") values (") ;
-        for(String value : personMap.values()) {
+        for(Object value : personMap.values()) {
             if(!value.equals("null")) {
                 System.out.println("value = " + value);
                 query.append("'").append(value).append("'").append(", ");
@@ -85,6 +83,16 @@ public class PersonDaoJDBC implements PersonDao {
 
     public Group findGroup(int idGroup) throws DAOException {
         return null;
+    }
+
+    @Override
+    public void deletePerson(Person person) {
+
+    }
+
+    @Override
+    public void deleteGroup(Group group) {
+
     }
 
 }
