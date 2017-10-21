@@ -69,7 +69,7 @@ public class SqlToolsTest {
     public void selectQueryTooMuchArgumentsTest() {
     	SqlTools sql = new SqlTools();
     	sql.setConnection(connection);
-    	ArrayList<ArrayList<String>> result  = sql.selectQuery(
+    	ArrayList<ArrayList<Object>> result  = sql.selectQuery(
     			"select " +
 						"(GroupId, name) values" +
 						"(?, ?)",		
@@ -84,7 +84,7 @@ public class SqlToolsTest {
     public void selectQueryTooFewArgumentsTest() {
     	SqlTools sql = new SqlTools();
     	sql.setConnection(connection);
-    	ArrayList<ArrayList<String>> result  = sql.selectQuery(
+    	ArrayList<ArrayList<Object>> result  = sql.selectQuery(
     			"select " +
 						"(GroupId, name) values" +
 						"(?, ?)",		
@@ -97,7 +97,7 @@ public class SqlToolsTest {
     public void selectQuerySqlSyntaxExceptionTest() {
     	SqlTools sql = new SqlTools();
     	sql.setConnection(connection);
-    	ArrayList<ArrayList<String>> result  = sql.selectQuery(
+    	ArrayList<ArrayList<Object>> result  = sql.selectQuery(
     			"select " +
 						"(GroupId, name) values" +
 						"(?, ?)",		
