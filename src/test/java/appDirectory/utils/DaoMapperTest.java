@@ -66,7 +66,7 @@ public class DaoMapperTest {
     }
 
     @Test(expected = DAOMapperException.class)
-    public void mapToInstanceNoSuchField() {
+    public void mapToInstanceNoSuchFieldTest() {
         HashMap<String, Object> fieldNotExist = new HashMap<>() ;
         fieldNotExist.put("notExist", "value") ;
         DaoMapper.mapToInstance(Person.class, fieldNotExist) ;

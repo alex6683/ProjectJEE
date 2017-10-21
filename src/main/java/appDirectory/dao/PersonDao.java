@@ -20,11 +20,11 @@ public interface PersonDao {
 
     Collection<Group> findAllGroups() throws DAOException ;
 
-    Collection<Person> findAllPersonInGroup(int groupId) throws DAOException ;
+    Collection<Person> findAllPersonInGroup(Group group) throws DAOException ;
 
-    Person findPerson(int idPerson) throws DAOException ;
+    Person findPerson(Person person) throws DAOException ;
 
-    Group findGroup(int idGroup) throws DAOException ;
+    Group findGroup(Group group) throws DAOException ;
 
     void deletePerson(Person person) ;
 

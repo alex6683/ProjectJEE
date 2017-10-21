@@ -2,37 +2,31 @@ package appDirectory.dao.impl;
 
 import appDirectory.model.Group;
 import appDirectory.model.Person;
+import appDirectory.utils.SqlTools;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring/spring.xml")
-public class PersonDaoJDBCTest {
+public class PersonDaoJDBCTest extends SqlTools {
 
     @Autowired
-    ApplicationContext context ;
-
-    @Autowired
-    PersonDaoJDBC daoJDBC ;
-
-    @Autowired
-    Person person ;
+    private PersonDaoJDBC jdbc ;
 
     @Before
     public void setUp() throws Exception {
-        person.setIdentifier(1);
-        person.setName("testNameJDBC");
-        person.setGroupID(1);
+
     }
 
     @After
@@ -42,7 +36,7 @@ public class PersonDaoJDBCTest {
 
     @Test
     public void addPersonTest() throws Exception {
-        daoJDBC.addPerson(person);
+
     }
 
     @Test
@@ -55,6 +49,7 @@ public class PersonDaoJDBCTest {
 
     @Test
     public void findAllGroups() throws Exception {
+        Collection<Group> all = jdbc.findAllGroups() ;
     }
 
     @Test
@@ -67,6 +62,11 @@ public class PersonDaoJDBCTest {
 
     @Test
     public void findGroup() throws Exception {
+    }
+
+    @Test
+    public void findAllPersonTest() throws Exception {
+        Collection<Person> all = jdbc.findAllPerson() ;
     }
 
 }
