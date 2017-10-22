@@ -1,4 +1,4 @@
-package appDirectory.utils;
+package appDirectory.dao;
 
 import appDirectory.exception.DAOMapperException;
 

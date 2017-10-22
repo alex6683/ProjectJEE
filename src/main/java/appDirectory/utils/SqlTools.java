@@ -1,5 +1,6 @@
 package appDirectory.utils;
 
+import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOConfigurationException;
 import appDirectory.exception.DAOException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -72,25 +72,6 @@ public class SqlTools {
         return result ;
     }
 
-//    public ResultSet selectQuery(String sql, Object... params) throws DAOException {
-//        if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
-//            throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
-//        }
-//        ResultSet result;
-//        try(Connection connection = newConnection() ;  PreparedStatement query = connection.prepareStatement(sql) ) {
-//            int comptParam = 1 ;
-//            for(Object param : params) {
-//                query.setObject(comptParam, param);
-//                comptParam ++ ;
-//            }
-//            result = query.executeQuery() ;
-//            result.close();
-//        } catch (SQLException e) {
-//            throw new DAOException(e) ;
-//        }
-//        return result ;
-//    }
-
     public int countRow(String sql, Object... params) throws DAOException {
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
@@ -136,46 +117,37 @@ public class SqlTools {
         return beans ;
     }
 
-//    public <K,V> String mapToSQLinsert(Map<K,V> map) {
-    //        StringBuilder sql = new StringBuilder() ;
-    //        sql.append("(") ;
-    //        for(K key : map.keySet())  {
-    //            sql.append(key).append(", ") ;
-    //        }
-    //        sql.deleteCharAt(sql.lastIndexOf(", ")).append(") values (") ;
-    //        for(V value : map.values()) {
-    //            sql.append(value).append(", ") ;
-    //        }
-    //        sql.deleteCharAt(sql.lastIndexOf(", ")).append(")") ;
-    //        return sql.toString() ;
-//    }
 
+    public <T> int insertBeans(String sqlTable, Collection<T> beans, Object...params) {
+        int result = 0 ;
+        ResultSet resultSet;
+        String sql = "select * from " + sqlTable ;
+        try(
+                Connection connection = newConnection() ;
+                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+        ) {
+            resultSet = query.executeQuery() ;
 
-//    public <K, V, T> int insertBeans(String sqlTable, BeanToMap<T> mapper, Collection<T> beans, Object...params) {
-//        Map<K, V> map ;
-//        int result = 0 ;
-//        for(T bean : beans) {
-//            String sql = "INSERT INTO " +  sqlTable + " ";
-//            map = mapper.toMap(bean) ;
-//            sql += mapToSQLinsert(map) ;
-//            result += executeUpdate(sql, params) ;
-//        }
-//        return result ;
-//    }
-//
-//    //sql doit etre egal a "update table set colonne1 = valeur1, colonne2 = valeur2 "
-//    public <K, V, T> int updateBeans(String sql, BeanToMap<T> mapper, Collection<T> beans, Object...params) {
-//        Map<K, V> map ;
-//        int result = 0 ;
-//        StringBuilder sqlBuilder = new StringBuilder(sql);
-//        for(T bean : beans) {
-//            map = mapper.toMap(bean) ;
-//            if(!map.containsKey("identifier")) {
-//                throw new IllegalStateException() ;
-//            }
-//            sqlBuilder.append(" where identifier = ").append("?");
-//            executeUpdate(sqlBuilder.toString(), params) ;
-//        }
-//        return result ;
-//    }
+            ResultSetMetaData metaData = resultSet.getMetaData() ;
+            Field columnField ;
+            String fieldName ;
+            resultSet.moveToInsertRow();
+            for(T bean : beans) {
+                for(int i=1 ; i<=metaData.getColumnCount() ; i++) {
+                    fieldName= resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
+                            "identifier" : resultSet.getMetaData().getColumnName(i) ;
+                    columnField = bean.getClass().getDeclaredField(fieldName) ;
+                    columnField.setAccessible(true);
+                    resultSet.updateObject(i, columnField.get(bean));
+                    columnField.setAccessible(false);
+                }
+                resultSet.insertRow();
+                result++ ;
+            }
+            resultSet.close();
+        } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
+            throw new DAOException(e) ;
+        }
+        return result ;
+    }
 }

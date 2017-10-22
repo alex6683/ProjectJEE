@@ -1,7 +1,10 @@
 package appDirectory.utils;
 
+import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOException;
+import appDirectory.exception.DAOMapperException;
 import appDirectory.model.Group;
+import appDirectory.model.Person;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
@@ -36,51 +41,6 @@ public class SqlToolsTest {
     public void tearDown() throws Exception {
 
     }
-
-//    @Test
-//    public void selectQueryTest() throws DAOException, SQLException {
-//        ResultSet resultToTest = sql.selectQuery("select * from Person   where 'groupID' = 1");
-//        assertTrue(resultToTest.isClosed());
-//        while(resultToTest.next()) {
-//            System.out.println("resultToTest.getObject() = " + resultToTest.getObject(resultToTest.getRow()));
-//        }
-//    }
-//
-//    @Test(expected = DAOException.class)
-//    public void selectQueryTooMuchArgumentsTest() {
-//        sql.selectQuery(
-//                "select " +
-//                        "(GroupId, name) values" +
-//                        "(?, ?)",
-//                "GroupId" ,
-//                "name" ,
-//                "fake" +
-//                        "from `Group`"
-//        );
-//    }
-//
-//    @Test(expected = DAOException.class)
-//    public void selectQueryTooFewArgumentsTest() {
-//        sql.selectQuery(
-//                "select " +
-//                        "(GroupId, name) values" +
-//                        "(?, ?)",
-//                "GroupId" +
-//                        "from `Group`"
-//        );
-//    }
-//
-//    @Test(expected = DAOException.class)
-//    public void selectQuerySqlSyntaxExceptionTest() {
-//        sql.selectQuery(
-//                "select " +
-//                        "(GroupId, name) values" +
-//                        "(?, ?)",
-//                "GroupId" ,
-//                "name" +
-//                        "from Group"
-//        );
-//    }
 
     @Test(expected = DAOException.class)
     public void executeUpdateTooMuchArgumentsTest() {
@@ -131,30 +91,55 @@ public class SqlToolsTest {
         assertEquals(1, result) ;
     }
 
+    @Test(expected = DAOException.class)
+    public void findBeansTooMuchArgumentsTest() {
+        sql.findBeans("select ?, name, email from Person",
+                (ResultSetToBean<Person>) resultSet -> null,
+                "surname", "personID") ;
+    }
 
-//    @Test
-//    public void mapToSQLinsertTest() {
-//        HashMap<String, Object> map = new HashMap<>() ;
-//        map.put("identifier", 2) ;
-//        map.put("date", Date.valueOf("1999-01-23")) ;
-//        map.put("email", null) ;
-//        map.put("name", "nameTest") ;
-//        map.put(null, "") ;
-//        assertEquals("(date, null, identifier, name, email ) values (1999-01-23, , 2, nameTest, null )", sql.mapToSQLinsert(map));
-//    }
+
+    @Test(expected = DAOException.class)
+    public void findBeansTooFewArgumentsTest() {
+        sql.findBeans("select ?, ?, ? from Person",
+                (ResultSetToBean<Person>) resultSet -> null,
+                "surname", "personID") ;
+    }
+
+    @Test(expected = DAOException.class)
+    public void findBeansSQLExceptionTest() {
+        sql.findBeans("select * from group", (ResultSetToBean<Group>) resultSet -> null) ;
+    }
 
     @Test
     public void findBeansTest() {
         Collection<Group> listGroup = sql.findBeans(
-                "select * from `Group`",
+                "select * from `Group` where groupID = ?",
                 resultSet -> {
                     Group group1 = new Group() ;
                     group1.setName("findBeanTest");
                     group1.setIdentifier(new Random().nextInt());
                     return group1 ;
-                }
+                },
+                1
         ) ;
         assertFalse(listGroup.isEmpty());
-        assertEquals(listGroup.size(), sql.countRow("select count(*) from `Group"));
+        assertEquals(listGroup.size(), sql.countRow("select count(*) from `Group` where groupID = 1"));
+    }
+
+    @Test
+    public void insertBeansTest() {
+        Person bean1 = new Person() ;
+        bean1.setName("insertBean1");
+        bean1.setGroupID(1);
+        bean1.setIdentifier(-1);
+        Person bean2 = new Person() ;
+        bean1.setName("insertBean2");
+        bean1.setGroupID(2);
+        bean1.setIdentifier(3);
+
+        Collection<Person> beans = new ArrayList<>() ;
+        beans.add(bean1) ;
+        beans.add(bean2) ;
     }
 }

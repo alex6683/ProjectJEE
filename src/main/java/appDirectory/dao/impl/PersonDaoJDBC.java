@@ -41,7 +41,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
 
     }
 
-    public Collection<Person> findAllPerson() throws DAOException{
+    public Collection<Person> findAllPerson() throws DAOException {
         return findBeans(
                 "select * from Person",
                 resultSet -> {
@@ -111,7 +111,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
                             fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
                                     "identifier" : resultSet.getMetaData().getColumnName(i) ;
                             fieldValue = resultSet.getObject(i) ;
-                            Field field = Group.class.getDeclaredField(fieldName) ;
+                            Field field = Person.class.getDeclaredField(fieldName) ;
                             field.setAccessible(true);
                             field.set(bean, fieldValue);
                             field.setAccessible(false);
@@ -130,11 +130,65 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     public Person findPerson(Person person) throws DAOException {
-        return null;
+        Collection<Person> onePerson = findBeans(
+                "select * from Person where personID = ?",
+                resultSet -> {
+                    try {
+                        Person bean = new Person() ;
+                        String fieldName ;
+                        Object fieldValue ;
+                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
+                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
+                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
+                            fieldValue = resultSet.getObject(i) ;
+                            Field field = Person.class.getDeclaredField(fieldName) ;
+                            field.setAccessible(true);
+                            field.set(bean, fieldValue);
+                            field.setAccessible(false);
+                        }
+                        return bean ;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        throw new DAOMapperException(e) ;
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        e.printStackTrace();
+                        throw new  DAOException(e) ;
+                    }
+                },
+                person.getIdentifier()
+        ) ;
+        return onePerson.toArray(new Person[1])[0] ;
     }
 
-    public Group findGroup(Group goup) throws DAOException {
-        return null;
+    public Group findGroup(Group group) throws DAOException {
+        Collection<Group> oneGroup = findBeans(
+                "select * from `Group` where groupID = ?",
+                resultSet -> {
+                    try {
+                        Group bean = new Group() ;
+                        String fieldName ;
+                        Object fieldValue ;
+                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
+                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
+                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
+                            fieldValue = resultSet.getObject(i) ;
+                            Field field = Group.class.getDeclaredField(fieldName) ;
+                            field.setAccessible(true);
+                            field.set(bean, fieldValue);
+                            field.setAccessible(false);
+                        }
+                        return bean ;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        throw new DAOMapperException(e) ;
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        e.printStackTrace();
+                        throw new  DAOException(e) ;
+                    }
+                },
+                group.getIdentifier()
+        ) ;
+        return oneGroup.toArray(new Group[1])[0] ;
     }
 
     public void deletePerson(Person person) {
