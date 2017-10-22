@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -127,6 +128,11 @@ public class SqlToolsTest {
         assertEquals(listGroup.size(), sql.countRow("select count(*) from `Group` where groupID = 1"));
     }
 
+    @Test(expected = DAOException.class)
+    public void insertBeansSQLException() {
+        sql.insertBeans("Personne", new ArrayList<Person>()) ;
+    }
+
     @Test
     public void insertBeansTest() {
         Person bean1 = new Person() ;
@@ -134,12 +140,14 @@ public class SqlToolsTest {
         bean1.setGroupID(1);
         bean1.setIdentifier(-1);
         Person bean2 = new Person() ;
-        bean1.setName("insertBean2");
-        bean1.setGroupID(2);
-        bean1.setIdentifier(3);
+        bean2.setName("insertBean2");
+        bean2.setGroupID(2);
+        bean2.setIdentifier(3);
 
         Collection<Person> beans = new ArrayList<>() ;
         beans.add(bean1) ;
         beans.add(bean2) ;
+
+        assertEquals(2, sql.insertBeans("Person", beans)) ;
     }
 }

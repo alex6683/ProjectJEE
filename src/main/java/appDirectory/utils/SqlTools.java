@@ -1,5 +1,6 @@
 package appDirectory.utils;
 
+import appDirectory.dao.BeanToResultSet;
 import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOConfigurationException;
 import appDirectory.exception.DAOException;
@@ -117,8 +118,7 @@ public class SqlTools {
         return beans ;
     }
 
-
-    public <T> int insertBeans(String sqlTable, Collection<T> beans, Object...params) {
+    public <T> int insertBeans(String sqlTable, Collection<T> beans) {
         int result = 0 ;
         ResultSet resultSet;
         String sql = "select * from " + sqlTable ;
@@ -127,27 +127,36 @@ public class SqlTools {
                 PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
         ) {
             resultSet = query.executeQuery() ;
-
-            ResultSetMetaData metaData = resultSet.getMetaData() ;
-            Field columnField ;
             String fieldName ;
             resultSet.moveToInsertRow();
             for(T bean : beans) {
-                for(int i=1 ; i<=metaData.getColumnCount() ; i++) {
-                    fieldName= resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
-                            "identifier" : resultSet.getMetaData().getColumnName(i) ;
-                    columnField = bean.getClass().getDeclaredField(fieldName) ;
-                    columnField.setAccessible(true);
-                    resultSet.updateObject(i, columnField.get(bean));
-                    columnField.setAccessible(false);
+                for(Field field : bean.getClass().getDeclaredFields()) {
+                    fieldName = field.getName() ;
+                    if(!fieldName.equals("identifier") && !fieldName.equals("serialVersionUID")) {
+                        field.setAccessible(true);
+                        System.out.println(fieldName + " = " + field.get(bean));
+                        resultSet.updateObject(fieldName, field.get(bean));
+                        field.setAccessible(false);
+                    }
                 }
                 resultSet.insertRow();
-                result++ ;
+                result ++ ;
             }
-            resultSet.close();
-        } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
+            resultSet.close() ;
+            connection.commit() ;
+        } catch (SQLException | IllegalAccessException e) {
             throw new DAOException(e) ;
         }
         return result ;
+    }
+
+    public <T> void updateBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... parameters)
+            throws SQLException {
+
+    }
+
+    public <T> void deleteBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... parameters)
+            throws SQLException {
+
     }
 }
