@@ -3,7 +3,6 @@ package appDirectory.utils;
 import appDirectory.dao.BeanToResultSet;
 import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOException;
-import appDirectory.exception.DAOMapperException;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
 import org.junit.After;
@@ -15,17 +14,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+/**
+ * Test de la class SqlTools
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring/spring.xml")
 public class SqlToolsTest {
@@ -166,7 +166,9 @@ public class SqlToolsTest {
                         try {
                             preparedStatement.setObject(1, bean.getIdentifier());
                             resultSet = preparedStatement.executeQuery();
-                            resultSet.next() ;
+                            if(!resultSet.next()) {
+                                throw new NullPointerException("Pas de resultSet pour le personID = " + bean1.getIdentifier()) ;
+                            }
                             resultSet.updateString("name", "updatedName");
                             resultSet.updateObject("surname", "updatedSurname");
                         } catch (SQLException e) {
@@ -188,12 +190,15 @@ public class SqlToolsTest {
         sql.insertBeans("Person", beans) ;
 
         try {
-            sql.deleteBean("select * from Person where personID = ?", (BeanToResultSet<Person>) (bean, preparedStatement, params) -> {
+            sql.deleteBean("select * from Person where personID = ?", (bean, preparedStatement, params) -> {
                         ResultSet resultSet = null;
                         try {
                             preparedStatement.setObject(1, bean.getIdentifier());
                             resultSet = preparedStatement.executeQuery() ;
                             resultSet.next() ;
+                            if(!resultSet.next()) {
+                                throw new NullPointerException("Pas de resultSet pour le personID = " + bean1.getIdentifier()) ;
+                            }
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }

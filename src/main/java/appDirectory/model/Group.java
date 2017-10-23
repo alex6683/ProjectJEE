@@ -2,25 +2,34 @@ package appDirectory.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 
+/**
+ * L'entité Group. Représente un groupe de Personne.
+ */
 public class Group implements Serializable {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
-	private Integer identifier ;
-
+    /**
+     * Identification du groupe
+     */
+	private Integer identifier = -1 ;
+    /**
+     * Nom du groupe
+     */
     private String name ;
+    /**
+     * Liste des personnes appartenant au groupe
+     */
+    private Collection<Person> persons ;
 
-    private ArrayList<Person> persons ;
-
+    @PostConstruct
     public void init() {
         setName(null) ;
-        setPersons(new ArrayList<Person>());
+        setPersons(new ArrayList<>());
     }
 
     public Integer getIdentifier() {
@@ -40,11 +49,11 @@ public class Group implements Serializable {
         this.name = name;
     }
 
-    public ArrayList<Person> getPersons() {
+    public Collection<Person> getPersons() {
         return persons;
     }
 
-    public void setPersons(ArrayList<Person> persons) {
+    public void setPersons(Collection<Person> persons) {
         this.persons = persons;
     }
 }

@@ -5,27 +5,55 @@ import org.springframework.beans.factory.annotation.Required;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * L'entité Personne. Représente une Personne et ses metadonnées.
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 19/10/2017
+ * @version 1.0
+ */
 public class Person implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer identifier ;
-
+    /**
+     * Identification de la Personne
+     */
+	private Integer identifier = -1 ;
+    /**
+     * Nom de la Personne
+     */
     private String name ;
-
+    /**
+     * Prénom de la Personne
+     */
     private String surname ;
-
+    /**
+     * Email de la Personne avec valeur par défaut
+     */
     private String email = "prenom.nom@etu.univ-amu.fr" ;
-
+    /**
+     * Site web de la Personne
+     */
     private String webSite ;
-
+    /**
+     * Date de naissance de la Personne
+     */
     private Date dateBirth ;
-
+    /**
+     * Mot de passe de la Personne avec valeur par défaut
+     */
     private String password = "admin" ;
-
+    /**
+     * Description de la Personne
+     */
     private String description ;
-
-    private Integer groupID ;
+    /**
+     * Numéro de groupe auquel appartient la Personne
+     */
+    private Group group ;
 
     public void init() {
         setName(null);
@@ -34,7 +62,7 @@ public class Person implements Serializable {
         setWebSite(null);
         setDateBirth(null);
         setPassword("admin");
-        setGroupID(null);
+        setGroup(null);
         setDescription("");
     }
 
@@ -95,12 +123,12 @@ public class Person implements Serializable {
         this.password = password;
     }
 
-    public Integer getGroupID() {
-        return groupID;
+    public Group getGroup() {
+        return group;
     }
 
-    public void setGroupID(Integer groupID) {
-        this.groupID = groupID;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public String getDescription() {
