@@ -29,7 +29,7 @@ import static org.junit.Assert.assertFalse;
 public class SqlToolsTest {
 
     @Autowired
-    private DataSource dataSource ;
+    DataSource dataSource ;
 
     @Autowired
     SqlTools sql ;
@@ -44,7 +44,7 @@ public class SqlToolsTest {
     Group group ;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         sql.setDataSource(dataSource);
         group.setName("groupTest");
         group.setIdentifier(5);
@@ -58,7 +58,7 @@ public class SqlToolsTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         sql.executeUpdate("delete from Person where name like '%Test%'") ;
         sql.executeUpdate("delete from `Group` where name like '%Test%'") ;
     }

@@ -49,7 +49,7 @@ public interface PersonDao {
      * @return : Le nombre de groupe ajouté
      * @throws DAOException
      */
-    int addGroup(Group group) throws DAOException ;
+    void addGroup(Group group) throws DAOException ;
 
     /**
      * Retrouve et renvoie tout les groupes présents dans la base de donnée

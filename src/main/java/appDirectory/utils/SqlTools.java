@@ -28,12 +28,10 @@ import java.util.Collection;
  * @date 21/10/2017
  * @version 2.0
  */
-@SuppressWarnings("Duplicates")
 @Service
 public class SqlTools {
 
-
-    private DataSource dataSource ;
+    private static DataSource dataSource ;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -41,7 +39,7 @@ public class SqlTools {
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+        SqlTools.dataSource = dataSource;
     }
 
     @PostConstruct
@@ -142,7 +140,10 @@ public class SqlTools {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
         }
         ResultSet result;
-        try(Connection connection = newConnection() ; PreparedStatement query = connection.prepareStatement(sql)) {
+        try(
+                Connection connection = newConnection() ;
+                PreparedStatement query = connection.prepareStatement(sql)
+        ) {
             int comptParam = 1 ;
             for(Object param : params) {
                 query.setObject(comptParam, param);

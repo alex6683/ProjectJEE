@@ -7,16 +7,19 @@ import appDirectory.model.Group;
 import appDirectory.model.Person;
 import appDirectory.utils.SqlTools;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * Classe d'implentation de l'interface PersonDAO via le driver JDBC.
  * Etends la classe SqlTools pour les manipulations bean et sql.
+ *
+ * !! CLASSE NON OPERATIONNEL !!
+ *  -> Les méthodes static ne fonctionne pas correctement.
  *
  * @author Mestrallet Alexis
  * @author Risch Philippe
@@ -68,10 +71,9 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         return true ;
     }
 
-    public int addGroup(Group group) throws DAOException {
-        Collection<Group> groups = new ArrayList<>() ;
-        groups.add(group) ;
-        return 0 ;
+    public void addGroup(Group group) throws DAOException {
+        insertBean("`Group` where groupID = ?", PersonDaoJDBC::groupToResulSet, group) ;
+
     }
 
     public Collection<Person> findAllPerson() throws DAOException {
@@ -122,9 +124,11 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
          return deleteBeans("select * from `Group` where groupID = ?", group.getIdentifier());
     }
 
+
     static public Person resultSetToPerson(ResultSet resultSet) {
         Person person = new Person();
         try {
+            resultSet.first() ;
             person.setIdentifier(resultSet.getInt("personID"));
             person.setName(resultSet.getString("name"));
             person.setSurname(resultSet.getString("surname"));
@@ -133,17 +137,20 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
             person.setDateBirth(resultSet.getDate("dateBirth"));
             person.setPassword(resultSet.getString("password"));
             person.setPassword(resultSet.getString("description"));
+            System.out.println("Truc de base OKK");
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
         }
         try(
-                Connection connection = new SqlTools().newConnection() ;
+                Connection connection = new SqlTools().newConnection();
                 PreparedStatement newStatement = connection.prepareStatement(
                         "select * from `Group` where groupID = ?"
                 )
         ) {
             newStatement.setInt(1, resultSet.getInt("groupID"));
             person.setGroup(resultSetToGroup(newStatement.executeQuery()));
+            System.out.println("person = " + person.getGroup().getIdentifier());
+            System.out.println("person = " + person.getGroup().getName());
             newStatement.close();
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
@@ -159,8 +166,8 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         } catch (SQLException e) {
             throw new DAOMapperException(e);
         }
-        Collection<Person> persons = new PersonDaoJDBC().findAllPersonInGroup(group);
-        group.setPersons(persons);
+//        Collection<Person> persons = new PersonDaoJDBC().findAllPersonInGroup(group);
+//        group.setPersons(persons);
         return group ;
     }
 
@@ -173,6 +180,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
                 resultSet.close();
                 return null ;
             }
+            resultSet.moveToInsertRow();
             resultSet.updateString("name", person.getName()) ;
             resultSet.updateString("surname", person.getSurname());
             resultSet.updateString("email", person.getEmail());
@@ -196,6 +204,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
                 resultSet.close();
                 return null ;
             }
+            resultSet.moveToInsertRow();
             resultSet.updateString("name", group.getName()) ;
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
