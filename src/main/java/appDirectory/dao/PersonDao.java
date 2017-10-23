@@ -14,9 +14,11 @@ public interface PersonDao {
 
     int addPerson(Person person) throws DAOException ;
 
-    void updateIfExist(Object object) throws DAOException ;
+    void updatePerson(Person person) throws DAOException ;
 
-    void addGroup(Group group) throws DAOException ;
+    void updateGroup(Group group) throws DAOException ;
+
+    int addGroup(Group group) throws DAOException ;
 
     Collection<Group> findAllGroups() throws DAOException ;
 

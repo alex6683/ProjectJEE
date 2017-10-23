@@ -12,11 +12,14 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
+@SuppressWarnings("Duplicates")
 @Repository
 public class PersonDaoJDBC extends SqlTools implements PersonDao {
 
@@ -32,16 +35,70 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
 
     @Override
     public int addPerson(Person person) throws DAOException {
-
-        return 0;
+        Collection<Person> persons = new ArrayList<>() ;
+        return insertBeans("Person", persons) ;
     }
 
-    public void addGroup(Group group) throws DAOException {
-
+    @Override
+    public void updatePerson(Person person) throws DAOException {
+        try {
+            updateBean(
+                    "select * from Person where personID = ?",
+                    (bean, preparedStatement, params) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            preparedStatement.setObject(1, person.getIdentifier());
+                            resultSet = preparedStatement.executeQuery();
+                            if(!resultSet.next()) {
+                                return null ;
+                            }
+                            resultSet.updateString("name", person.getName()) ;
+                            resultSet.updateString("surname", person.getSurname()) ;
+                            resultSet.updateString("email", person.getEmail()) ;
+                            resultSet.updateString("website", person.getWebSite()) ;
+                            resultSet.updateDate("dateBirth", (Date) person.getDateBirth());
+                            resultSet.updateString("password", person.getPassword()) ;
+                            resultSet.updateInt("groupID", person.getGroupID());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return resultSet ;
+                    },
+                    person
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void updateIfExist(Object object) throws DAOException {
+    public void updateGroup(Group group) throws DAOException {
+        try {
+            updateBean(
+                    "select * from `Group` where groupID = ?",
+                    (bean, preparedStatement, params) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            preparedStatement.setObject(1, group.getIdentifier());
+                            resultSet = preparedStatement.executeQuery();
+                            if(!resultSet.next()) {
+                                return null ;
+                            }
+                            resultSet.updateString("name", group.getName()) ;
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return resultSet ;
+                    },
+                    group
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public int addGroup(Group group) throws DAOException {
+        Collection<Person> persons = new ArrayList<>() ;
+        return insertBeans("Group", persons) ;
     }
 
     public Collection<Person> findAllPerson() throws DAOException {
