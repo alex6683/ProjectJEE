@@ -1,5 +1,6 @@
 package appDirectory.dao.impl;
 
+import appDirectory.dao.BeanToResultSet;
 import appDirectory.dao.PersonDao;
 import appDirectory.exception.DAOException;
 import appDirectory.exception.DAOMapperException;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -192,11 +195,51 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     public void deletePerson(Person person) {
-
+        try {
+            deleteBean(
+                    "select * from Person where personID = ?",
+                    (bean, preparedStatement, params) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            preparedStatement.setInt(1, bean.getIdentifier());
+                            resultSet = preparedStatement.executeQuery() ;
+                            if(!resultSet.next()) {
+                                return null ;
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return resultSet ;
+                    },
+                    person
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteGroup(Group group) {
-
+        try {
+            deleteBean(
+                    "select * from `Group` where groupID = ?",
+                    (bean, preparedStatement, params) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            preparedStatement.setInt(1, bean.getIdentifier());
+                            resultSet = preparedStatement.executeQuery() ;
+                            if(!resultSet.next()) {
+                                return null ;
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return resultSet ;
+                    },
+                    group
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

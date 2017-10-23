@@ -164,11 +164,9 @@ public class SqlToolsTest {
             sql.updateBean("select * from Person where personID = ?", (bean, preparedStatement, params) -> {
                         ResultSet resultSet = null;
                         try {
-                            System.out.println("bean1.getIdentifier() = " + bean1.getIdentifier());
                             preparedStatement.setObject(1, bean.getIdentifier());
                             resultSet = preparedStatement.executeQuery();
                             resultSet.next() ;
-                            System.out.println("resultSet.getObject(\"name\") = " + resultSet.getObject("name"));
                             resultSet.updateString("name", "updatedName");
                             resultSet.updateObject("surname", "updatedSurname");
                         } catch (SQLException e) {
@@ -185,6 +183,26 @@ public class SqlToolsTest {
 
     @Test
     public void deleteBeanTest() {
+        Collection<Person> beans = new ArrayList<>() ;
+        bean1.setIdentifier(150);
+        sql.insertBeans("Person", beans) ;
 
+        try {
+            sql.deleteBean("select * from Person where personID = ?", (BeanToResultSet<Person>) (bean, preparedStatement, params) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            preparedStatement.setObject(1, bean.getIdentifier());
+                            resultSet = preparedStatement.executeQuery() ;
+                            resultSet.next() ;
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return resultSet ;
+                    },
+                    bean1
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

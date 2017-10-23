@@ -173,9 +173,6 @@ public class SqlTools {
 
     public <T> void deleteBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... params)
             throws SQLException {
-        if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
-            throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
-        }
         try(
                 Connection connection = newConnection() ;
                 PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
