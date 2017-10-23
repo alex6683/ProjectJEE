@@ -1,5 +1,6 @@
 package appDirectory.utils;
 
+import appDirectory.dao.BeanToResultSet;
 import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOException;
 import appDirectory.exception.DAOMapperException;
@@ -14,7 +15,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -33,9 +36,21 @@ public class SqlToolsTest {
     @Autowired
     private SqlTools sql ;
 
+    @Autowired
+    private Person bean1 ;
+
+    @Autowired
+    private Person bean2 ;
+
     @Before
     public void setUp() throws Exception {
         sql.setDataSource(dataSource);
+        bean1.setName("insertBean1");
+        bean1.setGroupID(1);
+        bean1.setIdentifier(-1);
+        bean2.setName("insertBean2");
+        bean2.setGroupID(2);
+        bean2.setIdentifier(3);
     }
 
     @After
@@ -135,19 +150,41 @@ public class SqlToolsTest {
 
     @Test
     public void insertBeansTest() {
-        Person bean1 = new Person() ;
-        bean1.setName("insertBean1");
-        bean1.setGroupID(1);
-        bean1.setIdentifier(-1);
-        Person bean2 = new Person() ;
-        bean2.setName("insertBean2");
-        bean2.setGroupID(2);
-        bean2.setIdentifier(3);
-
         Collection<Person> beans = new ArrayList<>() ;
         beans.add(bean1) ;
         beans.add(bean2) ;
 
         assertEquals(2, sql.insertBeans("Person", beans)) ;
+    }
+
+    @Test
+    public void updateBeanTest() {
+        try {
+            bean1.setIdentifier(150);
+            sql.updateBean("select * from Person where personID = ?", (bean, preparedStatement, params) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            System.out.println("bean1.getIdentifier() = " + bean1.getIdentifier());
+                            preparedStatement.setObject(1, bean.getIdentifier());
+                            resultSet = preparedStatement.executeQuery();
+                            resultSet.next() ;
+                            System.out.println("resultSet.getObject(\"name\") = " + resultSet.getObject("name"));
+                            resultSet.updateString("name", "updatedName");
+                            resultSet.updateObject("surname", "updatedSurname");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return resultSet ;
+                    },
+                    bean1
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void deleteBeanTest() {
+
     }
 }

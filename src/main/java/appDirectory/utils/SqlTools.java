@@ -23,6 +23,7 @@ import java.util.Collection;
  * @date 19/10/2017
  * @version 1.0
  */
+@SuppressWarnings("Duplicates")
 @Service
 public class SqlTools {
 
@@ -150,13 +151,46 @@ public class SqlTools {
         return result ;
     }
 
-    public <T> void updateBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... parameters)
+    public <T> void updateBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... params)
             throws SQLException {
-
+        try(
+                Connection connection = newConnection() ;
+                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+        ) {
+            int comptParam = 1 ;
+            for(Object param : params) {
+                query.setObject(comptParam, param);
+                comptParam ++ ;
+            }
+            ResultSet resultSet = mapper.toResultSet(theBean, query) ;
+            resultSet.updateRow();
+            connection.commit();
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new DAOException(e) ;
+        }
     }
 
-    public <T> void deleteBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... parameters)
+    public <T> void deleteBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... params)
             throws SQLException {
-
+        if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
+            throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
+        }
+        try(
+                Connection connection = newConnection() ;
+                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+        ) {
+            int comptParam = 1 ;
+            for(Object param : params) {
+                query.setObject(comptParam, param);
+                comptParam ++ ;
+            }
+            ResultSet resultSet = mapper.toResultSet(theBean, query) ;
+            resultSet.deleteRow();
+            connection.commit();
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new DAOException(e) ;
+        }
     }
 }
