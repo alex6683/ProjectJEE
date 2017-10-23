@@ -164,8 +164,8 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         return group ;
     }
 
-    static public ResultSet personToResulSet(Person person, PreparedStatement sql) {
-        ResultSet resultSet = null;
+    static public ResultSet personToResulSet(Person person, PreparedStatement sql) throws DAOMapperException {
+        ResultSet resultSet;
         try {
             sql.setInt(1, person.getIdentifier());
             resultSet = sql.executeQuery();
@@ -182,14 +182,13 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
             resultSet.updateString("description", person.getDescription());
             resultSet.updateInt("groupID", person.getGroup().getIdentifier());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOMapperException(e) ;
         }
         return resultSet ;
     }
 
-
-    static public ResultSet groupToResulSet(Group group, PreparedStatement sql) {
-        ResultSet resultSet = null;
+    static public ResultSet groupToResulSet(Group group, PreparedStatement sql) throws DAOMapperException {
+        ResultSet resultSet;
         try {
             sql.setInt(1, group.getIdentifier());
             resultSet = sql.executeQuery();
@@ -199,7 +198,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
             }
             resultSet.updateString("name", group.getName()) ;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOMapperException(e) ;
         }
         return resultSet ;
     }

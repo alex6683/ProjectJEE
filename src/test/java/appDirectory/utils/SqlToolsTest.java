@@ -16,9 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,28 +32,35 @@ public class SqlToolsTest {
     private DataSource dataSource ;
 
     @Autowired
-    private SqlTools sql ;
+    SqlTools sql ;
 
     @Autowired
-    private Person bean1 ;
+    Person bean1 ;
 
     @Autowired
-    private Person bean2 ;
+    Person bean2 ;
+
+    @Autowired
+    Group group ;
 
     @Before
     public void setUp() throws Exception {
         sql.setDataSource(dataSource);
-        bean1.setName("insertBean1");
-        bean1.setGroupID(1);
+        group.setName("groupTest");
+        group.setIdentifier(5);
+
+        bean1.setName("TestBean1");
+        bean1.setGroup(group);
         bean1.setIdentifier(-1);
-        bean2.setName("insertBean2");
-        bean2.setGroupID(2);
+        bean2.setName("TestBean2");
+        bean2.setGroup(group);
         bean2.setIdentifier(3);
     }
 
     @After
     public void tearDown() throws Exception {
-
+        sql.executeUpdate("delete from Person where name like '%Test%'") ;
+        sql.executeUpdate("delete from `Group` where name like '%Test%'") ;
     }
 
     @Test(expected = DAOException.class)
@@ -94,8 +99,8 @@ public class SqlToolsTest {
     }
 
     @Test
-    public void executeUpdateTest() throws Exception {
-        int result = sql.executeUpdate(
+    public void executeUpdateTest() {
+        int resultPerson = sql.executeUpdate(
                 "insert into Person" +
                         " (name, surname, groupID) values" +
                         " (?, ?, ?)",
@@ -104,7 +109,7 @@ public class SqlToolsTest {
                 "1"
         ) ;
         //Vérifie l'insertion d'une ligne dans la base de donnée
-        assertEquals(1, result) ;
+        assertEquals(sql.countRow("select count(*) from Person where name = 'nameTest'"), resultPerson) ;
     }
 
     @Test(expected = DAOException.class)
@@ -129,85 +134,155 @@ public class SqlToolsTest {
 
     @Test
     public void findBeansTest() {
-        Collection<Group> listGroup = sql.findBeans(
-                "select * from `Group` where groupID = ?",
-                resultSet -> {
-                    Group group1 = new Group() ;
-                    group1.setName("findBeanTest");
-                    group1.setIdentifier(new Random().nextInt());
-                    return group1 ;
-                },
+        Collection<Person> persons = sql.findBeans("select * from Person where groupID = ?",
+                resultSet -> new Person(),
                 1
         ) ;
-        assertFalse(listGroup.isEmpty());
-        assertEquals(listGroup.size(), sql.countRow("select count(*) from `Group` where groupID = 1"));
+        assertEquals(persons.size(), sql.countRow("select count(*) from Person where groupID = 1"));
     }
 
     @Test(expected = DAOException.class)
     public void insertBeansSQLException() {
-        sql.insertBeans("Personne", new ArrayList<Person>()) ;
+        sql.insertBean("Group", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, group) ;
     }
 
     @Test
     public void insertBeansTest() {
-        Collection<Person> beans = new ArrayList<>() ;
-        beans.add(bean1) ;
-        beans.add(bean2) ;
+        sql.insertBean("`Group`", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                res.updateString("name", group.getName());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, group) ;
+        sql.insertBean("Person", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                bean1.setGroup(group);
+                res.updateString("name", bean1.getName());
+                res.updateInt("groupID", bean1.getGroup().getIdentifier());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, bean1) ;
 
-        assertEquals(2, sql.insertBeans("Person", beans)) ;
+        assertEquals(sql.countRow("select count(*) from Person where name like '%Test%'"), 1);
+        assertEquals(sql.countRow("select count(*) from `Group` where name like '%Test%'"), 1);
+    }
+
+    @Test
+    public void updateBeanNotExistTest() {
+        assertFalse(
+                sql.updateBean("select * from Person where name like '%Test%'", (bean, preparedStatement) -> {
+                    ResultSet res ;
+                    try {
+                        res = preparedStatement.executeQuery();
+                        if(!res.next()) return null ;
+                        res.updateString("name", bean2.getName());
+                    } catch (SQLException e) {
+                        throw new DAOException(e);
+                    }
+                    return res ;
+                }, bean2));
     }
 
     @Test
     public void updateBeanTest() {
-        try {
-            bean1.setIdentifier(150);
-            sql.updateBean("select * from Person where personID = ?", (bean, preparedStatement, params) -> {
-                        ResultSet resultSet = null;
-                        try {
-                            preparedStatement.setObject(1, bean.getIdentifier());
-                            resultSet = preparedStatement.executeQuery();
-                            if(!resultSet.next()) {
-                                throw new NullPointerException("Pas de resultSet pour le personID = " + bean1.getIdentifier()) ;
-                            }
-                            resultSet.updateString("name", "updatedName");
-                            resultSet.updateObject("surname", "updatedSurname");
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        return resultSet ;
-                    },
-                    bean1
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        sql.insertBean("Person", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                bean2.setGroup(group);
+                res.updateString("name", bean2.getName());
+                res.updateInt("groupID", bean2.getGroup().getIdentifier());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, bean2) ;
+
+        bean2.setName("updatedTestBean1");
+        sql.updateBean("select * from Person where name like '%Test%'", (BeanToResultSet<Person>) (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.next() ;
+                res.updateString("name", bean2.getName());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, bean2) ;
+        assertEquals(sql.countRow("select count(*) from Person where name = 'TestBean1'"), 0);
+        assertEquals(sql.countRow("select count(*) from Person where name = 'updatedTestBean1'"), 1);
     }
+
 
     @Test
     public void deleteBeanTest() {
-        Collection<Person> beans = new ArrayList<>() ;
-        bean1.setIdentifier(150);
-        sql.insertBeans("Person", beans) ;
+        sql.insertBean("Person", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                bean2.setGroup(group);
+                res.updateString("name", bean2.getName());
+                res.updateInt("groupID", bean2.getGroup().getIdentifier());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, bean2) ;
+        sql.insertBean("Person", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                bean1.setGroup(group);
+                res.updateString("name", bean1.getName());
+                res.updateInt("groupID", bean1.getGroup().getIdentifier());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, bean1) ;
 
-        try {
-            sql.deleteBean("select * from Person where personID = ?", (bean, preparedStatement, params) -> {
-                        ResultSet resultSet = null;
-                        try {
-                            preparedStatement.setObject(1, bean.getIdentifier());
-                            resultSet = preparedStatement.executeQuery() ;
-                            resultSet.next() ;
-                            if(!resultSet.next()) {
-                                throw new NullPointerException("Pas de resultSet pour le personID = " + bean1.getIdentifier()) ;
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        return resultSet ;
-                    },
-                    bean1
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        sql.deleteBeans("select * from Person where name like ?", "%Test%") ;
+
+        assertEquals(0, sql.countRow("select count(*) from Person where name like '%Test%'"));
+    }
+
+
+
+    @Test(expected = DAOException.class)
+    public void deleteBeansTooMuchArgumentsTest() {
+        sql.deleteBeans("select * from Person where groupID = ?", bean1.getIdentifier(), bean1.getName()) ;
+    }
+
+    @Test(expected = DAOException.class)
+    public void deleteBeansTooFewArgumentsTest() {
+        sql.deleteBeans("select * from Person where groupID = ?, name = ?, surname = ?", bean1.getIdentifier(), bean1.getName()) ;
+    }
+
+    @Test(expected = DAOException.class)
+    public void deleteBeansSQLErrorTest() {
+        sql.deleteBeans("select * from Person where id = ?", bean1.getIdentifier(), bean1.getName()) ;
+
     }
 }

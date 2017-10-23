@@ -3,6 +3,7 @@ package appDirectory.dao.impl;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
 import appDirectory.utils.SqlTools;
+import appDirectory.utils.SqlToolsTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,31 +23,21 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring/spring.xml")
-public class PersonDaoJDBCTest extends SqlTools {
+public class PersonDaoJDBCTest extends SqlToolsTest {
 
     @Autowired
     private PersonDaoJDBC jdbc ;
 
-    @Autowired
-    private Person person1 ;
-
-
-    @Autowired
-    private Person person2 ;
-
-    @Autowired
-    Group group ;
-
     @Before
     public void setUp() throws Exception {
-        group.setIdentifier(5);
+        group.setIdentifier(3);
         group.setName("FSITest") ;
 
         person1.setName("MestralletTest");
-        person1.setGroupID(3) ;
+        person1.setGroup(group) ;
 
         person2.setName("RischTest");
-        person2.setGroupID(3);
+        person2.setGroup(group);
     }
 
     @After
@@ -57,6 +48,7 @@ public class PersonDaoJDBCTest extends SqlTools {
     @Test
     public void addPersonTest() throws Exception {
         jdbc.addPerson(person1) ;
+        assertEquals();
     }
 
     @Test

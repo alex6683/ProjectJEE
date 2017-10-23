@@ -90,6 +90,7 @@ public class SqlTools {
                 comptParam ++ ;
             }
             result = query.executeUpdate() ;
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e) ;
         }
@@ -109,7 +110,7 @@ public class SqlTools {
         }
         ResultSet result;
         int count ;
-        try(Connection connection = newConnection() ;  PreparedStatement query = connection.prepareStatement(sql) ) {
+        try(Connection connection = newConnection() ; PreparedStatement query = connection.prepareStatement(sql) ) {
             int comptParam = 1 ;
             for(Object param : params) {
                 query.setObject(comptParam, param);
@@ -174,6 +175,9 @@ public class SqlTools {
                 PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
         ) {
             resultSet = mapper.toResultSet(bean, query) ;
+            if(resultSet == null) {
+                return ;
+            }
             resultSet.insertRow();
             resultSet.close() ;
             connection.commit() ;
