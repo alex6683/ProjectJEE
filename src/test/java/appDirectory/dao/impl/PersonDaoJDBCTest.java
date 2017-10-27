@@ -60,8 +60,8 @@ public class PersonDaoJDBCTest {
 
     @After
     public void tearDown() {
-//        jdbc.executeUpdate("delete from Person where name like '%Test%'") ;
-//        jdbc.executeUpdate("delete from `Group` where name like '%Test%'") ;
+        jdbc.executeUpdate("delete from Person where name like '%Test%'") ;
+        jdbc.executeUpdate("delete from `Group` where name like '%Test%'") ;
     }
 
     @Test

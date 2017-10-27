@@ -41,7 +41,8 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
 
     @Override
     public void addPerson(Person person) throws DAOException {
-        insertBean("Person", PersonDaoJDBC::personToResulSet, person) ;
+        int newId = insertBean("Person", PersonDaoJDBC::personToResulSet, person) ;
+        person.setIdentifier(newId);
     }
 
     @Override
@@ -71,8 +72,8 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     public void addGroup(Group group) throws DAOException {
-        insertBean("`Group` where groupID = ?", PersonDaoJDBC::groupToResulSet, group) ;
-
+        int newId = insertBean("`Group`", PersonDaoJDBC::groupToResulSet, group) ;
+        group.setIdentifier(newId);
     }
 
     public Collection<Person> findAllPerson() throws DAOException {
@@ -124,6 +125,11 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
 
+    /**
+     * FOR FIND PURPOSE
+     * @param resultSet
+     * @return
+     */
     static public Person resultSetToPerson(ResultSet resultSet) {
         Person person = new Person();
         try {
@@ -136,7 +142,6 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
             person.setDateBirth(resultSet.getDate("dateBirth"));
             person.setPassword(resultSet.getString("password"));
             person.setPassword(resultSet.getString("description"));
-            System.out.println("Truc de base OKK");
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
         }
@@ -148,8 +153,6 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         ) {
             newStatement.setInt(1, resultSet.getInt("groupID"));
             person.setGroup(resultSetToGroup(newStatement.executeQuery()));
-            System.out.println("person = " + person.getGroup().getIdentifier());
-            System.out.println("person = " + person.getGroup().getName());
             newStatement.close();
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
@@ -157,6 +160,11 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         return person ;
     }
 
+    /**
+     * FOR FIND PURPOSE
+     * @param resultSet
+     * @return
+     */
     static public Group resultSetToGroup(ResultSet resultSet) {
         Group group = new Group();
         try {
@@ -170,10 +178,20 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         return group ;
     }
 
-    static public ResultSet personToResulSet(Person person, PreparedStatement sql) throws DAOMapperException {
+    /**
+     * AJOUT + UPDATE
+     * @param person
+     * @param sql
+     * @return
+     * @throws DAOMapperException
+     */
+    static public ResultSet personToResulSet(Person person, PreparedStatement sql, Object... params) throws DAOMapperException {
         ResultSet resultSet;
         try {
-            sql.setInt(1, person.getIdentifier());
+            int countParam = 1 ;
+            for(Object param : params) {
+                sql.setObject(countParam++, param);
+            }
             resultSet = sql.executeQuery();
             if(!resultSet.next()) {
                 resultSet.close();
@@ -194,10 +212,20 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         return resultSet ;
     }
 
-    static public ResultSet groupToResulSet(Group group, PreparedStatement sql) throws DAOMapperException {
+    /**
+     * AJOUT + UPDATE
+     * @param group
+     * @param sql
+     * @return
+     * @throws DAOMapperException
+     */
+    static public ResultSet groupToResulSet(Group group, PreparedStatement sql, Object... params) throws DAOMapperException {
         ResultSet resultSet;
         try {
-            sql.setInt(1, group.getIdentifier());
+            int countParam = 1 ;
+            for(Object param : params) {
+                sql.setObject(countParam++, param);
+            }
             resultSet = sql.executeQuery();
             if(!resultSet.next()) {
                 resultSet.close();
