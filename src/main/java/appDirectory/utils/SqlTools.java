@@ -161,30 +161,42 @@ public class SqlTools {
     }
 
     /**
-     * Insert les Javabeans dans la base de donnée pour une table SQL donnée.
+     * Insert les Javabeans dans la base de donnée pour une table SQL donnée et retourne son nouvel
+     * identifiant.
      *
      * @param sqlTable : La table SQL où insérer
      * @param bean : Le javabean à insérer
      * @param <T> : La classe du javaBean
+     * @return : L'identifiant de l'élément inséré
      * @throws DAOException
      */
-    public <T> void insertBean(String sqlTable, BeanToResultSet<T> mapper, T bean) throws DAOException  {
+    public <T> int insertBean(String sqlTable, BeanToResultSet<T> mapper, T bean) throws DAOException  {
         ResultSet resultSet;
+        int id = -1 ;
         String sql = "select * from " + sqlTable ;
         try(
                 Connection connection = newConnection() ;
-                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+                PreparedStatement query = connection.prepareStatement(
+                        sql,
+                        ResultSet.TYPE_SCROLL_SENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE
+                )
         ) {
             resultSet = mapper.toResultSet(bean, query) ;
             if(resultSet == null) {
-                return ;
+                return id ;
             }
             resultSet.insertRow();
+            resultSet.moveToCurrentRow();
+            resultSet.last() ;
+            id = resultSet.getInt(1) ;
             resultSet.close() ;
             connection.commit() ;
         } catch (SQLException e) {
             throw new DAOException(e) ;
         }
+
+        return id ;
     }
 
     /**

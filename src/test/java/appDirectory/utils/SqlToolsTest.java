@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 /**
  * Test de la class SqlTools
  */
+@SuppressWarnings("Duplicates")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring/spring.xml")
 public class SqlToolsTest {
@@ -156,7 +157,7 @@ public class SqlToolsTest {
 
     @Test
     public void insertBeansTest() {
-        sql.insertBean("`Group`", (bean, preparedStatement) -> {
+        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -167,7 +168,7 @@ public class SqlToolsTest {
             }
             return res ;
         }, group) ;
-        sql.insertBean("Person", (bean, preparedStatement) -> {
+        int idPerson = sql.insertBean("Person", (bean, preparedStatement) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();

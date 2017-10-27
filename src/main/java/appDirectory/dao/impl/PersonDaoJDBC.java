@@ -7,7 +7,6 @@ import appDirectory.model.Group;
 import appDirectory.model.Person;
 import appDirectory.utils.SqlTools;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
