@@ -133,7 +133,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     static public Person resultSetToPerson(ResultSet resultSet) {
         Person person = new Person();
         try {
-            resultSet.first() ;
+//            resultSet.first() ;
             person.setIdentifier(resultSet.getInt("personID"));
             person.setName(resultSet.getString("name"));
             person.setSurname(resultSet.getString("surname"));
@@ -151,9 +151,9 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
                         "select * from `Group` where groupID = ?"
                 )
         ) {
-            newStatement.setInt(1, resultSet.getInt("groupID"));
-            person.setGroup(resultSetToGroup(newStatement.executeQuery()));
-            newStatement.close();
+//            newStatement.setInt(1, resultSet.getInt("groupID"));
+//            person.setGroup(resultSetToGroup(newStatement.executeQuery()));
+//            newStatement.close();
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
         }

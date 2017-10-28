@@ -80,27 +80,55 @@ public class PersonDaoJDBCTest {
     public void findAllGroupsTest()  {
         Collection<Group> all = jdbc.findAllGroups() ;
 //        assertEquals(sql.countRow("select count(*) from `Group`"), all.size());
+        for(Group group : all) {
+            System.out.println("group = " + group.getName()) ;
+        }
     }
 
     @Test
-    public void findAllPersonInGroupTest() throws Exception {
-        jdbc.findAllPersonInGroup(group) ;
+    public void findAllPersonTest() {
+        Collection<Person> all = jdbc.findAllPerson() ;
+        for(Person person : all) {
+            System.out.println("person = " + person.getName()) ;
+            System.out.println("person = " + person.getIdentifier()) ;
+        }
+    }
+
+    @Test
+    public void findAllPersonInGroupTest() {
+        group.setIdentifier(1);
+        Collection<Person> all = jdbc.findAllPersonInGroup(group) ;
+//        assertEquals(sql.countRow("select count(*) from `Group`"), all.size());
+        for(Person person : all) {
+            System.out.println("person = " + person.getName()) ;
+            System.out.println("person = " + person.getIdentifier()) ;
+        }
     }
 
     @Test
     public void findPersonTest() throws Exception {
-        jdbc.findPerson(person1) ;
+        jdbc.addPerson(person1);
+        Person person = jdbc.findPerson(person1) ;
+        assertEquals(person.getName(), person1.getName());
+        assertEquals(person.getIdentifier(), person1.getIdentifier());
+        assertEquals(person.getSurname(), person1.getSurname());
+        assertEquals(person.getEmail(), person1.getEmail());
+        assertEquals(person.getDateBirth(), person1.getDateBirth());
+        assertEquals(person.getWebSite(), person1.getWebSite());
+        assertEquals(person.getPassword(), person1.getPassword());
+        assertEquals(person.getDescription(), person1.getDescription());
+        assertEquals(person.getGroup().getIdentifier(), person1.getGroup().getIdentifier());
     }
 
     @Test
     public void findGroupTest() throws Exception {
-        jdbc.findGroup(group) ;
+        jdbc.addPerson(person1);
+        Person person = jdbc.findPerson(person1) ;
+        assertEquals(person.getName(), person1.getName());
+        assertEquals(person.getIdentifier(), person1.getIdentifier());
     }
 
-    @Test
-    public void findAllPersonTest() throws Exception {
-        Collection<Person> all = jdbc.findAllPerson() ;
-    }
+
 
     @Test
     public void deleteGroup() {
