@@ -10,11 +10,28 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collection;
 
+/*fe1392acfa5e492c52805ea6a91653a3a1ddedeb*/
+
+/**
+ * Classe d'implentation de l'interface PersonDAO via le driver JDBC.
+ * Etends la classe SqlTools pour les manipulations bean et sql.
+ *
+ * !! CLASSE NON OPERATIONNEL !!
+ *  -> Les méthodes static ne fonctionne pas correctement.
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 23/10/2017
+ * @version 3.0
+ */
 @Repository
 public class PersonDaoJDBC extends SqlTools implements PersonDao {
 
@@ -29,103 +46,60 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     @Override
-    public int addPerson(Person person) throws DAOException {
+    public void addPerson(Person person) throws DAOException {
+        int newId = insertBean("Person", PersonDaoJDBC::personToResulSet, person) ;
+        person.setIdentifier(newId);
+    }
 
-        return 0;
+    @Override
+    public boolean savePerson(Person person) throws DAOException {
+        if(!updateBean(
+                "select * from Person where personID = ?",
+                PersonDaoJDBC::personToResulSet,
+                person
+        )) {
+            addPerson(person) ;
+            return false ;
+        }
+        return true ;
+    }
+
+    @Override
+    public boolean saveGroup(Group group) throws DAOException {
+        if(!updateBean(
+                "select * from `Group` where groupID = ?",
+                PersonDaoJDBC::groupToResulSet,
+                group
+        )) {
+            addGroup(group) ;
+            return false ;
+        }
+        return true ;
     }
 
     public void addGroup(Group group) throws DAOException {
-
-    }
-
-    public void updateIfExist(Object object) throws DAOException {
-
+        int newId = insertBean("`Group`", PersonDaoJDBC::groupToResulSet, group) ;
+        group.setIdentifier(newId);
     }
 
     public Collection<Person> findAllPerson() throws DAOException {
         return findBeans(
                 "select * from Person",
-                resultSet -> {
-                    try {
-                        Person bean = new Person() ;
-                        String fieldName ;
-                        Object fieldValue ;
-                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
-                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
-                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
-                            fieldValue = resultSet.getObject(i) ;
-                            Field field = Person.class.getDeclaredField(fieldName) ;
-                            field.setAccessible(true);
-                            field.set(bean, fieldValue);
-                            field.setAccessible(false);
-                        }
-                        return bean ;
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        throw new DAOMapperException(e) ;
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new  DAOException(e) ;
-                    }
-                }
+                PersonDaoJDBC::resultSetToPerson
         );
     }
 
     public Collection<Group> findAllGroups() throws DAOException {
         return findBeans(
                 "select * from `Group`",
-                resultSet -> {
-                    try {
-                        Group bean = new Group() ;
-                        String fieldName ;
-                        Object fieldValue ;
-                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
-                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
-                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
-                            fieldValue = resultSet.getObject(i) ;
-                            Field field = Group.class.getDeclaredField(fieldName) ;
-                            field.setAccessible(true);
-                            field.set(bean, fieldValue);
-                            field.setAccessible(false);
-                        }
-                        return bean ;
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        throw new DAOMapperException(e) ;
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new DAOException(e) ;
-                    }
-                }
+                PersonDaoJDBC::resultSetToGroup
         );
     }
 
     public Collection<Person> findAllPersonInGroup(Group group) throws DAOException {
         return findBeans(
                 "select * from Person where groupID = ?",
-                resultSet -> {
-                    try {
-                        Person bean = new Person() ;
-                        String fieldName ;
-                        Object fieldValue ;
-                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
-                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
-                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
-                            fieldValue = resultSet.getObject(i) ;
-                            Field field = Person.class.getDeclaredField(fieldName) ;
-                            field.setAccessible(true);
-                            field.set(bean, fieldValue);
-                            field.setAccessible(false);
-                        }
-                        return bean ;
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        throw new DAOMapperException(e) ;
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new DAOException(e) ;
-                    }
-                },
+                PersonDaoJDBC::resultSetToPerson,
                 group.getIdentifier()
         );
     }
@@ -133,29 +107,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     public Person findPerson(Person person) throws DAOException {
         Collection<Person> onePerson = findBeans(
                 "select * from Person where personID = ?",
-                resultSet -> {
-                    try {
-                        Person bean = new Person() ;
-                        String fieldName ;
-                        Object fieldValue ;
-                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
-                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
-                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
-                            fieldValue = resultSet.getObject(i) ;
-                            Field field = Person.class.getDeclaredField(fieldName) ;
-                            field.setAccessible(true);
-                            field.set(bean, fieldValue);
-                            field.setAccessible(false);
-                        }
-                        return bean ;
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        throw new DAOMapperException(e) ;
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new  DAOException(e) ;
-                    }
-                },
+                PersonDaoJDBC::resultSetToPerson,
                 person.getIdentifier()
         ) ;
         return onePerson.toArray(new Person[1])[0] ;
@@ -164,80 +116,132 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     public Group findGroup(Group group) throws DAOException {
         Collection<Group> oneGroup = findBeans(
                 "select * from `Group` where groupID = ?",
-                resultSet -> {
-                    try {
-                        Group bean = new Group() ;
-                        String fieldName ;
-                        Object fieldValue ;
-                        for(int i=1 ; i<=resultSet.getMetaData().getColumnCount() ; i++) {
-                            fieldName = resultSet.getMetaData().getColumnName(i).endsWith("ID") ?
-                                    "identifier" : resultSet.getMetaData().getColumnName(i) ;
-                            fieldValue = resultSet.getObject(i) ;
-                            Field field = Group.class.getDeclaredField(fieldName) ;
-                            field.setAccessible(true);
-                            field.set(bean, fieldValue);
-                            field.setAccessible(false);
-                        }
-                        return bean ;
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        throw new DAOMapperException(e) ;
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new  DAOException(e) ;
-                    }
-                },
+                PersonDaoJDBC::resultSetToGroup,
                 group.getIdentifier()
         ) ;
         return oneGroup.toArray(new Group[1])[0] ;
     }
 
-    public void deletePerson(Person person) {
-        try {
-            deleteBean(
-                    "select * from Person where personID = ?",
-                    (bean, preparedStatement, params) -> {
-                        ResultSet resultSet = null;
-                        try {
-                            preparedStatement.setInt(1, bean.getIdentifier());
-                            resultSet = preparedStatement.executeQuery() ;
-                            if(!resultSet.next()) {
-                                return null ;
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        return resultSet ;
-                    },
-                    person
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public int deletePerson(Person person) throws DAOException {
+        return deleteBeans("select * from Person where personID = ?", person.getIdentifier());
     }
 
-    public void deleteGroup(Group group) {
-        try {
-            deleteBean(
-                    "select * from `Group` where groupID = ?",
-                    (bean, preparedStatement, params) -> {
-                        ResultSet resultSet = null;
-                        try {
-                            preparedStatement.setInt(1, bean.getIdentifier());
-                            resultSet = preparedStatement.executeQuery() ;
-                            if(!resultSet.next()) {
-                                return null ;
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        return resultSet ;
-                    },
-                    group
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public int deleteGroup(Group group) throws DAOException {
+         return deleteBeans("select * from `Group` where groupID = ?", group.getIdentifier());
     }
 
+
+    /**
+     * FOR FIND PURPOSE
+     * @param resultSet
+     * @return
+     */
+    static public Person resultSetToPerson(ResultSet resultSet) {
+        Person person = new Person();
+        try {
+//            resultSet.first() ;
+            person.setIdentifier(resultSet.getInt("personID"));
+            person.setName(resultSet.getString("name"));
+            person.setSurname(resultSet.getString("surname"));
+            person.setEmail(resultSet.getString("email"));
+            person.setWebSite(resultSet.getString("webSite"));
+            person.setDateBirth(resultSet.getDate("dateBirth"));
+            person.setPassword(resultSet.getString("password"));
+            person.setPassword(resultSet.getString("description"));
+        } catch (SQLException e) {
+            throw new DAOMapperException(e) ;
+        }
+        try(
+                Connection connection = new SqlTools().newConnection();
+                PreparedStatement newStatement = connection.prepareStatement(
+                        "select * from `Group` where groupID = ?"
+                )
+        ) {
+//            newStatement.setInt(1, resultSet.getInt("groupID"));
+//            person.setGroup(resultSetToGroup(newStatement.executeQuery()));
+//            newStatement.close();
+        } catch (SQLException e) {
+            throw new DAOMapperException(e) ;
+        }
+        return person ;
+    }
+
+    /**
+     * FOR FIND PURPOSE
+     * @param resultSet
+     * @return
+     */
+    static public Group resultSetToGroup(ResultSet resultSet) {
+        Group group = new Group();
+        try {
+            group.setIdentifier(resultSet.getInt("groupID"));
+            group.setName(resultSet.getString("name"));
+        } catch (SQLException e) {
+            throw new DAOMapperException(e);
+        }
+//        Collection<Person> persons = new PersonDaoJDBC().findAllPersonInGroup(group);
+//        group.setPersons(persons);
+        return group ;
+    }
+
+    /**
+     * AJOUT + UPDATE
+     * @param person
+     * @param sql
+     * @return
+     * @throws DAOMapperException
+     */
+    static public ResultSet personToResulSet(Person person, PreparedStatement sql, Object... params) throws DAOMapperException {
+        ResultSet resultSet;
+        try {
+            int countParam = 1 ;
+            for(Object param : params) {
+                sql.setObject(countParam++, param);
+            }
+            resultSet = sql.executeQuery();
+            if(!resultSet.next()) {
+                resultSet.close();
+                return null ;
+            }
+            resultSet.moveToInsertRow();
+            resultSet.updateString("name", person.getName()) ;
+            resultSet.updateString("surname", person.getSurname());
+            resultSet.updateString("email", person.getEmail());
+            resultSet.updateString("webSite", person.getWebSite());
+            resultSet.updateDate("dateBirth", (Date) person.getDateBirth());
+            resultSet.updateString("password", person.getPassword());
+            resultSet.updateString("description", person.getDescription());
+            resultSet.updateInt("groupID", person.getGroup().getIdentifier());
+        } catch (SQLException e) {
+            throw new DAOMapperException(e) ;
+        }
+        return resultSet ;
+    }
+
+    /**
+     * AJOUT + UPDATE
+     * @param group
+     * @param sql
+     * @return
+     * @throws DAOMapperException
+     */
+    static public ResultSet groupToResulSet(Group group, PreparedStatement sql, Object... params) throws DAOMapperException {
+        ResultSet resultSet;
+        try {
+            int countParam = 1 ;
+            for(Object param : params) {
+                sql.setObject(countParam++, param);
+            }
+            resultSet = sql.executeQuery();
+            if(!resultSet.next()) {
+                resultSet.close();
+                return null ;
+            }
+            resultSet.moveToInsertRow();
+            resultSet.updateString("name", group.getName()) ;
+        } catch (SQLException e) {
+            throw new DAOMapperException(e) ;
+        }
+        return resultSet ;
+    }
 }
