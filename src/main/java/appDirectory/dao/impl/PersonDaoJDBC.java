@@ -1,6 +1,5 @@
 package appDirectory.dao.impl;
 
-import appDirectory.dao.BeanToResultSet;
 import appDirectory.dao.PersonDao;
 import appDirectory.exception.DAOException;
 import appDirectory.exception.DAOMapperException;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
