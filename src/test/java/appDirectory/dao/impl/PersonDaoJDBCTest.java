@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -51,10 +52,8 @@ public class PersonDaoJDBCTest {
         jdbc.setDataSource(dataSource);
 
         group.setName("groupTest");
-        group.setIdentifier(5);
 
         person1.setName("TestBean1");
-        person1.setGroupID(group);
         person1.setIdentifier(-1);
     }
 
@@ -66,6 +65,8 @@ public class PersonDaoJDBCTest {
 
     @Test
     public void addPersonTest() {
+        jdbc.addGroup(group);
+        person1.setGroupID(group);
         jdbc.addPerson(person1) ;
         assertEquals(jdbc.countRow("select count(*) from Person where name like '%Test%'"), 1);
     }
@@ -101,6 +102,7 @@ public class PersonDaoJDBCTest {
     @Test
     public void findPersonTest() {
         jdbc.addGroup(group);
+        person1.setGroupID(group);
         jdbc.addPerson(person1);
         Person person = jdbc.findPerson(person1) ;
         assertEquals(person.getName(), person1.getName());
@@ -117,8 +119,10 @@ public class PersonDaoJDBCTest {
     @Test
     public void findGroupTest() {
         jdbc.addGroup(group);
+        person1.setGroupID(group);
         jdbc.addPerson(person1);
         Person person2 = new Person() ;
+        person2.setName("PersonTest2");
         person2.setGroupID(group);
         jdbc.addPerson(person2);
         Group group1 = jdbc.findGroup(group) ;

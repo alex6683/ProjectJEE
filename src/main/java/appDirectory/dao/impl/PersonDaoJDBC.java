@@ -173,8 +173,6 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         try {
             group.setIdentifier(resultSet.getInt("groupID"));
             group.setName(resultSet.getString("name"));
-            System.out.println("group = " + group.getIdentifier());
-            System.out.println("group.getName() = " + group.getName());
         } catch (SQLException e) {
             throw new DAOMapperException(e);
         }
