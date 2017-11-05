@@ -133,13 +133,23 @@ public class PersonDaoJDBCTest {
 
 
     @Test
-    public void deleteGroup() {
+    public void deleteGroupTest() {
 
     }
 
 
     @Test
-    public void deletePerson() {
+    public void deletePersonTest() {
+
+    }
+
+    @Test
+    public void savePerson() {
+
+    }
+
+    @Test
+    public void saveGroup() {
 
     }
 

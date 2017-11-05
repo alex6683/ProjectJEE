@@ -48,13 +48,11 @@ public class SqlToolsTest {
     public void setUp() {
         sql.setDataSource(dataSource);
         group.setName("groupTest");
-        group.setIdentifier(5);
+        group.setIdentifier(-1);
 
         bean1.setName("TestBean1");
-        bean1.setGroupID(group);
         bean1.setIdentifier(-1);
         bean2.setName("TestBean2");
-        bean2.setGroupID(group);
         bean2.setIdentifier(3);
     }
 
@@ -173,7 +171,7 @@ public class SqlToolsTest {
             try {
                 res = preparedStatement.executeQuery();
                 res.moveToInsertRow();
-                bean1.setGroupID(group);
+                bean1.setGroupID(idGroup);
                 res.updateString("name", bean1.getName());
                 res.updateInt("groupID", bean1.getGroupID()) ;
             } catch (SQLException e) {
@@ -204,12 +202,23 @@ public class SqlToolsTest {
 
     @Test
     public void updateBeanTest() {
+        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                res.updateString("name", group.getName());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, group) ;
         sql.insertBean("Person", (bean, preparedStatement) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
                 res.moveToInsertRow();
-                bean2.setGroupID(group);
+                bean2.setGroupID(idGroup);
                 res.updateString("name", bean2.getName());
                 res.updateInt("groupID", bean2.getGroupID());
             } catch (SQLException e) {
@@ -237,12 +246,23 @@ public class SqlToolsTest {
 
     @Test
     public void deleteBeanTest() {
+        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement) -> {
+            ResultSet res ;
+            try {
+                res = preparedStatement.executeQuery();
+                res.moveToInsertRow();
+                res.updateString("name", group.getName());
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+            return res ;
+        }, group) ;
         sql.insertBean("Person", (bean, preparedStatement) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
                 res.moveToInsertRow();
-                bean2.setGroupID(group);
+                bean2.setGroupID(idGroup);
                 res.updateString("name", bean2.getName());
                 res.updateInt("groupID", bean2.getGroupID());
             } catch (SQLException e) {
@@ -257,7 +277,7 @@ public class SqlToolsTest {
                 res.moveToInsertRow();
                 bean1.setGroupID(group);
                 res.updateString("name", bean1.getName());
-                res.updateInt("groupID", bean1.getGroupID());
+                res.updateInt("groupID", idGroup);
             } catch (SQLException e) {
                 throw new DAOException(e);
             }
