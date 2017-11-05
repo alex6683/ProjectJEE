@@ -6,11 +6,16 @@ import appDirectory.exception.DAOMapperException;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
 import appDirectory.utils.SqlTools;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -28,6 +33,9 @@ import java.util.Collection;
  */
 @Repository
 public class PersonDaoJDBC extends SqlTools implements PersonDao {
+
+    static AbstractApplicationContext context =
+            new ClassPathXmlApplicationContext("spring.xml");
 
     @PostConstruct
     public void init() {
@@ -99,19 +107,25 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     public Person findPerson(Person person) throws DAOException {
+        return this.findPerson(person.getIdentifier()) ;
+    }
+
+    public Person findPerson(Integer personID) throws DAOException {
         Collection<Person> onePerson = findBeans(
-                "select * from Person where personID = ?",
-                PersonDaoJDBC::resultSetToPerson,
-                person.getIdentifier()
+                "select * from Person where personID = " + personID,
+                PersonDaoJDBC::resultSetToPerson
         ) ;
         return onePerson.toArray(new Person[1])[0] ;
     }
 
     public Group findGroup(Group group) throws DAOException {
+        return this.findGroup(group.getIdentifier()) ;
+    }
+
+    public Group findGroup(Integer groupID) throws DAOException {
         Collection<Group> oneGroup = findBeans(
-                "select * from `Group` where groupID = ?",
-                PersonDaoJDBC::resultSetToGroup,
-                group.getIdentifier()
+                "select * from `Group` where groupID = " + groupID,
+                PersonDaoJDBC::resultSetToGroup
         ) ;
         return oneGroup.toArray(new Group[1])[0] ;
     }
@@ -121,7 +135,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     public int deleteGroup(Group group) throws DAOException {
-         return deleteBeans("select * from `Group` where groupID = ?", group.getIdentifier());
+        return deleteBeans("select * from `Group` where groupID = ?", group.getIdentifier());
     }
 
 
@@ -133,7 +147,6 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     static public Person resultSetToPerson(ResultSet resultSet) {
         Person person = new Person();
         try {
-//            resultSet.first() ;
             person.setIdentifier(resultSet.getInt("personID"));
             person.setName(resultSet.getString("name"));
             person.setSurname(resultSet.getString("surname"));
@@ -141,19 +154,8 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
             person.setWebSite(resultSet.getString("webSite"));
             person.setDateBirth(resultSet.getDate("dateBirth"));
             person.setPassword(resultSet.getString("password"));
-            person.setPassword(resultSet.getString("description"));
-        } catch (SQLException e) {
-            throw new DAOMapperException(e) ;
-        }
-        try(
-                Connection connection = new SqlTools().newConnection();
-                PreparedStatement newStatement = connection.prepareStatement(
-                        "select * from `Group` where groupID = ?"
-                )
-        ) {
-//            newStatement.setInt(1, resultSet.getInt("groupID"));
-//            person.setGroup(resultSetToGroup(newStatement.executeQuery()));
-//            newStatement.close();
+            person.setDescription(resultSet.getString("description"));
+            person.setGroupID(resultSet.getInt("groupID"));
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
         }
@@ -167,14 +169,18 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
      */
     static public Group resultSetToGroup(ResultSet resultSet) {
         Group group = new Group();
+        context.registerShutdownHook();
         try {
             group.setIdentifier(resultSet.getInt("groupID"));
             group.setName(resultSet.getString("name"));
+            System.out.println("group = " + group.getIdentifier());
+            System.out.println("group.getName() = " + group.getName());
         } catch (SQLException e) {
             throw new DAOMapperException(e);
         }
-//        Collection<Person> persons = new PersonDaoJDBC().findAllPersonInGroup(group);
-//        group.setPersons(persons);
+        PersonDaoJDBC jdbc = context.getBean(PersonDaoJDBC.class) ;
+        Collection<Person> persons = jdbc.findAllPersonInGroup(group) ;
+        group.setPersons(persons) ;
         return group ;
     }
 
@@ -205,7 +211,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
             resultSet.updateDate("dateBirth", (Date) person.getDateBirth());
             resultSet.updateString("password", person.getPassword());
             resultSet.updateString("description", person.getDescription());
-            resultSet.updateInt("groupID", person.getGroup().getIdentifier());
+            resultSet.updateInt("groupID", person.getGroupID());
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
         }

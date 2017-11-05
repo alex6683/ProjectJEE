@@ -74,6 +74,16 @@ public interface PersonDao {
      */
     Person findPerson(Person person) throws DAOException ;
 
+
+    /**
+     * Retrouve et renvoie une personne de la base de donnée
+     * @param personID : La personne à retrouver
+     * @return : La personne trouvée
+     * @throws DAOException
+     */
+    Person findPerson(Integer personID) throws DAOException ;
+
+
     /**
      * Retrouve et renvoie un groupe de la base de donnée
      * @param group : Le groupe à retrouver
@@ -81,6 +91,14 @@ public interface PersonDao {
      * @throws DAOException
      */
     Group findGroup(Group group) throws DAOException ;
+
+    /**
+     * Retrouve et renvoie un groupe de la base de donnée
+     * @param groupID : Le groupe à retrouver
+     * @return : Le groupe trouvé
+     * @throws DAOException
+     */
+    Group findGroup(Integer groupID) throws DAOException ;
 
     /**
      * Supprime une personne donnée de la base de donnée

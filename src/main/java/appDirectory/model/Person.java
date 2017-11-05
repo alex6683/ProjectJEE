@@ -53,7 +53,7 @@ public class Person implements Serializable {
     /**
      * Numéro de groupe auquel appartient la Personne
      */
-    private Group group ;
+    private Integer groupID ;
 
     public void init() {
         setName(null);
@@ -62,7 +62,7 @@ public class Person implements Serializable {
         setWebSite(null);
         setDateBirth(null);
         setPassword("admin");
-        setGroup(null);
+        setGroupID(-1);
         setDescription("");
     }
 
@@ -123,12 +123,16 @@ public class Person implements Serializable {
         this.password = password;
     }
 
-    public Group getGroup() {
-        return group;
+    public Integer getGroupID() {
+        return groupID ;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroupID(Integer group) {
+        this.groupID = group;
+    }
+
+    public void setGroupID(Group group) {
+        this.groupID = group.getIdentifier();
     }
 
     public String getDescription() {

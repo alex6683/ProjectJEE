@@ -54,7 +54,7 @@ public class PersonDaoJDBCTest {
         group.setIdentifier(5);
 
         person1.setName("TestBean1");
-        person1.setGroup(group);
+        person1.setGroupID(group);
         person1.setIdentifier(-1);
     }
 
@@ -79,10 +79,7 @@ public class PersonDaoJDBCTest {
     @Test
     public void findAllGroupsTest()  {
         Collection<Group> all = jdbc.findAllGroups() ;
-//        assertEquals(sql.countRow("select count(*) from `Group`"), all.size());
-        for(Group group : all) {
-            System.out.println("group = " + group.getName()) ;
-        }
+        assertEquals(jdbc.countRow("select count(*) from `Group`"), all.size());
     }
 
     @Test
@@ -98,15 +95,12 @@ public class PersonDaoJDBCTest {
     public void findAllPersonInGroupTest() {
         group.setIdentifier(1);
         Collection<Person> all = jdbc.findAllPersonInGroup(group) ;
-//        assertEquals(sql.countRow("select count(*) from `Group`"), all.size());
-        for(Person person : all) {
-            System.out.println("person = " + person.getName()) ;
-            System.out.println("person = " + person.getIdentifier()) ;
-        }
+        assertEquals(jdbc.countRow("select count(*) from Person where groupID = 1"), all.size());
     }
 
     @Test
-    public void findPersonTest() throws Exception {
+    public void findPersonTest() {
+        jdbc.addGroup(group);
         jdbc.addPerson(person1);
         Person person = jdbc.findPerson(person1) ;
         assertEquals(person.getName(), person1.getName());
@@ -117,15 +111,19 @@ public class PersonDaoJDBCTest {
         assertEquals(person.getWebSite(), person1.getWebSite());
         assertEquals(person.getPassword(), person1.getPassword());
         assertEquals(person.getDescription(), person1.getDescription());
-        assertEquals(person.getGroup().getIdentifier(), person1.getGroup().getIdentifier());
+        assertEquals(person.getGroupID(), person1.getGroupID());
     }
 
     @Test
-    public void findGroupTest() throws Exception {
+    public void findGroupTest() {
+        jdbc.addGroup(group);
         jdbc.addPerson(person1);
-        Person person = jdbc.findPerson(person1) ;
-        assertEquals(person.getName(), person1.getName());
-        assertEquals(person.getIdentifier(), person1.getIdentifier());
+        Person person2 = new Person() ;
+        person2.setGroupID(group);
+        jdbc.addPerson(person2);
+        Group group1 = jdbc.findGroup(group) ;
+        assertEquals(group1.getName(), group.getName());
+        assertEquals(group1.getIdentifier(), group.getIdentifier());
     }
 
 
@@ -140,76 +138,5 @@ public class PersonDaoJDBCTest {
     public void deletePerson() {
 
     }
-
-    @Test
-    public void groupToResultSetTest() {
-        ResultSet resultSet;
-        String sql = "select * from `Group` where groupID = ?";
-        try(
-                Connection connection = jdbc.newConnection() ;
-                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
-        ) {
-            resultSet = PersonDaoJDBC.groupToResulSet(group, query) ;
-            assertNotNull(resultSet);
-            assertEquals(resultSet.getString("name"), group.getName());
-        } catch (SQLException e) {
-            throw new DAOException(e) ;
-        }
-    }
-
-    @Test
-    public void personToResulSetTest() {
-        ResultSet resultSet;
-        String sql = "select * from Person where personID = ?";
-        try(
-                Connection connection = jdbc.newConnection() ;
-                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
-        ) {
-            resultSet = PersonDaoJDBC.personToResulSet(person1, query) ;
-            assertNotNull(resultSet);
-            assertEquals(resultSet.getString("name"), person1.getName());
-            assertEquals(resultSet.getInt("groupID"), person1.getGroup().getIdentifier(), 0);
-        } catch (SQLException e) {
-            throw new DAOException(e) ;
-        }
-    }
-
-    @Test
-    public void resultSetToGroupTest() {
-        ResultSet resultSet;
-        String sql = "select * from `Group` where groupID = ?";
-        try(
-                Connection connection = jdbc.newConnection() ;
-                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
-        ) {
-            query.setInt(1, group.getIdentifier());
-            resultSet = query.executeQuery() ;
-            Group group = PersonDaoJDBC.resultSetToGroup(resultSet) ;
-            System.out.println("group.getIdentifier() = " + group.getIdentifier());
-        } catch (SQLException e) {
-            throw new DAOException(e) ;
-        }
-    }
-
-    @Test
-    public void resultSetToPersonTest() {
-        jdbc.addGroup(group);
-        jdbc.addPerson(person1);
-        ResultSet resultSet;
-        String sql = "select * from Person where name like ?";
-        try(
-                Connection connection = jdbc.newConnection() ;
-                PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
-        ) {
-            query.setString(1, "%Test%");
-            resultSet = query.executeQuery() ;
-            Person person = PersonDaoJDBC.resultSetToPerson(resultSet) ;
-            assertEquals("TestBean1", person.getName());
-            assertEquals(person.getGroup().getIdentifier(), group.getIdentifier());
-        } catch (SQLException e) {
-            throw new DAOException(e) ;
-        }
-    }
-
 
 }
