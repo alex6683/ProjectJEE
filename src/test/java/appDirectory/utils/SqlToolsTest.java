@@ -5,6 +5,7 @@ import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOException;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
+import org.dbunit.dataset.IDataSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,5 +1,6 @@
 package appDirectory.dao.impl;
 
+import appDirectory.dao.GroupDAO;
 import appDirectory.dao.PersonDao;
 import appDirectory.exception.DAOException;
 import appDirectory.exception.DAOMapperException;
@@ -22,9 +23,6 @@ import java.util.Collection;
  * Classe d'implentation de l'interface PersonDAO via le driver JDBC.
  * Etends la classe SqlTools pour les manipulations bean et sql.
  *
- * !! CLASSE NON OPERATIONNEL !!
- *  -> Les méthodes static ne fonctionne pas correctement.
- *
  * @author Mestrallet Alexis
  * @author Risch Philippe
  *
@@ -32,9 +30,9 @@ import java.util.Collection;
  * @version 3.0
  */
 @Repository
-public class PersonDaoJDBC extends SqlTools implements PersonDao {
+public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
-    static AbstractApplicationContext context =
+    private static AbstractApplicationContext context =
             new ClassPathXmlApplicationContext("spring.xml");
 
     @PostConstruct
@@ -49,7 +47,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
 
     @Override
     public void addPerson(Person person) throws DAOException {
-        int newId = insertBean("Person", PersonDaoJDBC::personToResulSet, person) ;
+        int newId = insertBean("Person", DaoJDBC::personToResulSet, person) ;
         person.setIdentifier(newId);
     }
 
@@ -57,7 +55,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     public boolean savePerson(Person person) throws DAOException {
         if(!updateBean(
                 "select * from Person where personID = ?",
-                PersonDaoJDBC::personToResulSet,
+                DaoJDBC::personToResulSet,
                 person
         )) {
             addPerson(person) ;
@@ -70,7 +68,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     public boolean saveGroup(Group group) throws DAOException {
         if(!updateBean(
                 "select * from `Group` where groupID = ?",
-                PersonDaoJDBC::groupToResulSet,
+                DaoJDBC::groupToResulSet,
                 group
         )) {
             addGroup(group) ;
@@ -80,28 +78,28 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     }
 
     public void addGroup(Group group) throws DAOException {
-        int newId = insertBean("`Group`", PersonDaoJDBC::groupToResulSet, group) ;
+        int newId = insertBean("`Group`", DaoJDBC::groupToResulSet, group) ;
         group.setIdentifier(newId);
     }
 
     public Collection<Person> findAllPerson() throws DAOException {
         return findBeans(
                 "select * from Person",
-                PersonDaoJDBC::resultSetToPerson
+                DaoJDBC::resultSetToPerson
         );
     }
 
     public Collection<Group> findAllGroups() throws DAOException {
         return findBeans(
                 "select * from `Group`",
-                PersonDaoJDBC::resultSetToGroup
+                DaoJDBC::resultSetToGroup
         );
     }
 
     public Collection<Person> findAllPersonInGroup(Group group) throws DAOException {
         return findBeans(
                 "select * from Person where groupID = ?",
-                PersonDaoJDBC::resultSetToPerson,
+                DaoJDBC::resultSetToPerson,
                 group.getIdentifier()
         );
     }
@@ -113,7 +111,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     public Person findPerson(Integer personID) throws DAOException {
         Collection<Person> onePerson = findBeans(
                 "select * from Person where personID = " + personID,
-                PersonDaoJDBC::resultSetToPerson
+                DaoJDBC::resultSetToPerson
         ) ;
         return onePerson.toArray(new Person[1])[0] ;
     }
@@ -125,7 +123,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
     public Group findGroup(Integer groupID) throws DAOException {
         Collection<Group> oneGroup = findBeans(
                 "select * from `Group` where groupID = " + groupID,
-                PersonDaoJDBC::resultSetToGroup
+                DaoJDBC::resultSetToGroup
         ) ;
         return oneGroup.toArray(new Group[1])[0] ;
     }
@@ -176,7 +174,7 @@ public class PersonDaoJDBC extends SqlTools implements PersonDao {
         } catch (SQLException e) {
             throw new DAOMapperException(e);
         }
-        PersonDaoJDBC jdbc = context.getBean(PersonDaoJDBC.class) ;
+        DaoJDBC jdbc = context.getBean(DaoJDBC.class) ;
         Collection<Person> persons = jdbc.findAllPersonInGroup(group) ;
         group.setPersons(persons) ;
         return group ;

@@ -1,30 +1,19 @@
 package appDirectory.dao.impl;
 
-import appDirectory.exception.DAOException;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
-import appDirectory.utils.SqlTools;
-import appDirectory.utils.SqlToolsTest;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Classe de Test de la class PersonDaoJDBC
@@ -32,13 +21,13 @@ import static org.junit.Assert.assertNotNull;
 @SuppressWarnings("Duplicates")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring/spring.xml")
-public class PersonDaoJDBCTest {
+public class DaoJDBCTest {
 
     @Autowired
     DataSource dataSource ;
 
     @Autowired
-    PersonDaoJDBC jdbc ;
+    DaoJDBC jdbc ;
 
     @Autowired
     Person person1 ;
@@ -131,16 +120,21 @@ public class PersonDaoJDBCTest {
     }
 
 
-
     @Test
     public void deleteGroupTest() {
-
+        jdbc.addGroup(group);
+        jdbc.deleteGroup(group) ;
+        assertEquals(jdbc.countRow("select count(*) from `Group` where groupID = ?", group.getIdentifier()), 0);
     }
 
 
     @Test
     public void deletePersonTest() {
-
+        jdbc.addGroup(group);
+        person1.setGroupID(group);
+        jdbc.addPerson(person1);
+        jdbc.deletePerson(person1) ;
+        assertEquals(jdbc.countRow("select count(*) from Person where personID = ?", person1.getIdentifier()), 0);
     }
 
     @Test
@@ -150,7 +144,10 @@ public class PersonDaoJDBCTest {
 
     @Test
     public void saveGroup() {
-
+        jdbc.saveGroup(group) ;
+        group.setName("newNameSavedTest");
+        jdbc.saveGroup(group) ;
+        assertEquals(jdbc.findGroup(group).getName(), "newNameSavedTest");
     }
 
 }

@@ -28,4 +28,17 @@
             p:maxTotal="5"
     />
 
+    <!--<bean-->
+            <!--id="dataSourceTester"-->
+            <!--class="org.apache.commons.dbcp2.BasicDataSource"-->
+            <!--p:url="jdbc:mysql://localhost:9999/m12017293"-->
+            <!--p:username="m12017293"-->
+            <!--p:password=".?+NSr3P"-->
+            <!--p:defaultAutoCommit="false"-->
+            <!--p:initialSize="5"-->
+            <!--p:maxTotal="5"-->
+    <!--/>-->
+
+
+
 </beans>
