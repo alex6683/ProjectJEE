@@ -27,8 +27,6 @@ bin
 *.tar.gz
 *.rar
 
-*.iml
 target
 out
 bin
-.idea

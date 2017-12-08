@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="DirectoryManager:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/DirectoryManager_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="DirectoryManager/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="DirectoryManager" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.3.11.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-context:4.3.11.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-beans:4.3.11.RELEASE" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
