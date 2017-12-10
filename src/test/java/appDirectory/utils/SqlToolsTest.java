@@ -5,7 +5,6 @@ import appDirectory.dao.ResultSetToBean;
 import appDirectory.exception.DAOException;
 import appDirectory.model.Group;
 import appDirectory.model.Person;
-import org.dbunit.dataset.IDataSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertFalse;
  */
 @SuppressWarnings("Duplicates")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/spring/spring.xml")
+@ContextConfiguration(locations = "/spring.xml")
 public class SqlToolsTest {
 
     @Autowired
@@ -143,7 +142,7 @@ public class SqlToolsTest {
 
     @Test(expected = DAOException.class)
     public void insertBeansSQLException() {
-        sql.insertBean("Group", (bean, preparedStatement) -> {
+        sql.insertBean("Group", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -156,7 +155,7 @@ public class SqlToolsTest {
 
     @Test
     public void insertBeansTest() {
-        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement) -> {
+        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -167,7 +166,7 @@ public class SqlToolsTest {
             }
             return res ;
         }, group) ;
-        int idPerson = sql.insertBean("Person", (bean, preparedStatement) -> {
+        int idPerson = sql.insertBean("Person", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -188,7 +187,7 @@ public class SqlToolsTest {
     @Test
     public void updateBeanNotExistTest() {
         assertFalse(
-                sql.updateBean("select * from Person where name like '%Test%'", (bean, preparedStatement) -> {
+                sql.updateBean("select * from Person where name like '%Test%'", (bean, preparedStatement, params) -> {
                     ResultSet res ;
                     try {
                         res = preparedStatement.executeQuery();
@@ -203,7 +202,7 @@ public class SqlToolsTest {
 
     @Test
     public void updateBeanTest() {
-        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement) -> {
+        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -214,7 +213,7 @@ public class SqlToolsTest {
             }
             return res ;
         }, group) ;
-        sql.insertBean("Person", (bean, preparedStatement) -> {
+        sql.insertBean("Person", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -229,7 +228,7 @@ public class SqlToolsTest {
         }, bean2) ;
 
         bean2.setName("updatedTestBean1");
-        sql.updateBean("select * from Person where name like '%Test%'", (BeanToResultSet<Person>) (bean, preparedStatement) -> {
+        sql.updateBean("select * from Person where name like '%Test%'", (BeanToResultSet<Person>) (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -247,7 +246,7 @@ public class SqlToolsTest {
 
     @Test
     public void deleteBeanTest() {
-        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement) -> {
+        int idGroup = sql.insertBean("`Group`", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -258,7 +257,7 @@ public class SqlToolsTest {
             }
             return res ;
         }, group) ;
-        sql.insertBean("Person", (bean, preparedStatement) -> {
+        sql.insertBean("Person", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();
@@ -271,7 +270,7 @@ public class SqlToolsTest {
             }
             return res ;
         }, bean2) ;
-        sql.insertBean("Person", (bean, preparedStatement) -> {
+        sql.insertBean("Person", (bean, preparedStatement, params) -> {
             ResultSet res ;
             try {
                 res = preparedStatement.executeQuery();

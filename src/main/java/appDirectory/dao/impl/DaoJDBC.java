@@ -13,10 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -33,7 +31,7 @@ import java.util.Collection;
 public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
     private static AbstractApplicationContext context =
-            new ClassPathXmlApplicationContext("spring.xml");
+            new ClassPathXmlApplicationContext("/spring/spring.xml");
 
     @PostConstruct
     public void init() {
@@ -56,7 +54,8 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         if(!updateBean(
                 "select * from Person where personID = ?",
                 DaoJDBC::personToResulSet,
-                person
+                person,
+                person.getIdentifier()
         )) {
             addPerson(person) ;
             return false ;
@@ -69,11 +68,13 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         if(!updateBean(
                 "select * from `Group` where groupID = ?",
                 DaoJDBC::groupToResulSet,
-                group
+                group,
+                group.getIdentifier()
         )) {
             addGroup(group) ;
             return false ;
         }
+        System.out.println("true = " + true);
         return true ;
     }
 
@@ -104,6 +105,14 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         );
     }
 
+    public Collection<Person> findAllPersonInGroup(Integer groupID) throws DAOException {
+        return findBeans(
+                "select * from Person where groupID = ?",
+                DaoJDBC::resultSetToPerson,
+                groupID
+        );
+    }
+
     public Person findPerson(Person person) throws DAOException {
         return this.findPerson(person.getIdentifier()) ;
     }
@@ -114,6 +123,14 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
                 DaoJDBC::resultSetToPerson
         ) ;
         return onePerson.toArray(new Person[1])[0] ;
+    }
+
+    public Collection<Person> findPerson(Object keyWord) {
+        return findBeans(
+                "select * from Person where name like ? or surname like ? or email like ?",
+                DaoJDBC::resultSetToPerson,
+                keyWord, keyWord, keyWord
+        ) ;
     }
 
     public Group findGroup(Group group) throws DAOException {
@@ -128,12 +145,42 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         return oneGroup.toArray(new Group[1])[0] ;
     }
 
+    public Group findOneGroup(String keyWord) throws DAOException {
+        Collection<Group> oneGroup = findBeans(
+                "select * from `Group` where name like ?",
+                DaoJDBC::resultSetToGroup,
+                keyWord
+        ) ;
+        return oneGroup.toArray(new Group[1])[0] ;
+    }
+
+    public Collection<Group> findGroup(String keyWord) throws DAOException {
+        return findBeans(
+                "select * from `Group` where name like ?",
+                DaoJDBC::resultSetToGroup,
+                keyWord
+        ) ;
+    }
+
     public int deletePerson(Person person) throws DAOException {
         return deleteBeans("select * from Person where personID = ?", person.getIdentifier());
     }
 
     public int deleteGroup(Group group) throws DAOException {
         return deleteBeans("select * from `Group` where groupID = ?", group.getIdentifier());
+    }
+
+    public boolean loginPerson(String login, String password) {
+        Collection<Person> persons = findPerson(login) ;
+//        if(persons.size() == 1) {
+        Person person = persons.iterator().next() ;
+        if(person != null && person.getPassword().equals(password)) {
+            return true ;
+        }
+//        } else {
+//            throw new IllegalStateException("login non unique") ;
+//        }
+        return false ;
     }
 
 
@@ -199,12 +246,14 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
                 resultSet.close();
                 return null ;
             }
-            resultSet.moveToInsertRow();
+            if(params.length==0) {
+                resultSet.moveToInsertRow();
+            }
             resultSet.updateString("name", person.getName()) ;
             resultSet.updateString("surname", person.getSurname());
             resultSet.updateString("email", person.getEmail());
             resultSet.updateString("webSite", person.getWebSite());
-            resultSet.updateDate("dateBirth", (Date) person.getDateBirth());
+            resultSet.updateDate("dateBirth", person.getDateBirth());
             resultSet.updateString("password", person.getPassword());
             resultSet.updateString("description", person.getDescription());
             resultSet.updateInt("groupID", person.getGroupID());
@@ -233,11 +282,36 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
                 resultSet.close();
                 return null ;
             }
-            resultSet.moveToInsertRow();
+            if(params.length==0) {
+                resultSet.moveToInsertRow();
+            }
             resultSet.updateString("name", group.getName()) ;
         } catch (SQLException e) {
             throw new DAOMapperException(e) ;
         }
         return resultSet ;
+    }
+
+    public Collection<Group> findAllGroupWithGroupInFirst(Group group) throws SQLException {
+        Collection<Group> listGroup= new ArrayList<Group>();
+        listGroup.add(group);
+        String query = "SELECT * FROM `Group` WHERE groupID!= "+ group.getIdentifier();
+
+        try (Connection conn = newConnection()){
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                Group g = new Group();
+
+                g.setIdentifier( rs.getInt("groupID") );
+                g.setName( rs.getString("name") );
+                listGroup.add(g);
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        }
+        return listGroup;
     }
 }

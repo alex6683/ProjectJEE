@@ -9,9 +9,9 @@
        default-init-method="init"
        default-destroy-method="destroy">
 
-
     <context:annotation-config/>
 
+    <!--<import resource="../../../../WebContent/WEB-INF/springapp-servlet.xml"/>-->
     <import resource="model.xml"/>
     <import resource="dao.xml"/>
 

@@ -208,12 +208,12 @@ public class SqlTools {
      * @param <T> : La classe du javabean
      * @throws DAOException
      */
-    public <T> boolean updateBean(String sql, BeanToResultSet<T> mapper, T theBean) throws DAOException {
+    public <T> boolean updateBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... params) throws DAOException {
         try(
                 Connection connection = newConnection() ;
                 PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
         ) {
-            ResultSet resultSet = mapper.toResultSet(theBean, query) ;
+            ResultSet resultSet = mapper.toResultSet(theBean, query, params) ;
             if(resultSet == null) {
                 return false ;
             }

@@ -1,9 +1,11 @@
 package appDirectory.model;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
+
 
 /**
  * L'entité Personne. Représente une Personne et ses metadonnées.
@@ -33,7 +35,7 @@ public class Person implements Serializable {
     /**
      * Email de la Personne avec valeur par défaut
      */
-    private String email = "prenom.nom@etu.univ-amu.fr" ;
+    private String email = "prenom.nom@etu.univ-mrs.fr" ;
     /**
      * Site web de la Personne
      */
@@ -41,6 +43,7 @@ public class Person implements Serializable {
     /**
      * Date de naissance de la Personne
      */
+    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
     private Date dateBirth ;
     /**
      * Mot de passe de la Personne avec valeur par défaut
@@ -58,7 +61,7 @@ public class Person implements Serializable {
     public void init() {
         setName(null);
         setSurname(null);
-        setEmail("prenom.nom@etu.univ-amu.fr");
+        setEmail("prenom.nom@etu.univ-mrs.fr");
         setWebSite(null);
         setDateBirth(null);
         setPassword("admin");

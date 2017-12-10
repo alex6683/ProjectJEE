@@ -1,21 +1,15 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: alex
-  Date: 07/12/17
-  Time: 22:16
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/header.jsp"%>
-<html>
+<%@ include file="/WEB-INF/jsp/header.jsp" %><html>
+
 <head>
-  <title>$Title$</title>
+  <title>index</title>
 </head>
 <body>
 <h1>Accueil</h1>
 
 <%-- rediriger le contr�leur hello --%>
-<%-- 	<c:redirect url="/actions/connexion/login" /> --%>
+ 	<%--<c:redirect url="/actions/accueil.htm"/>--%>
 
 <p>Bienvenue sur la page d'accueil du gestionnaire d'annuaire des
   �tudiants de master informatique de l'universit� d'Aix-Marseille</p>
@@ -27,7 +21,7 @@
   <li>Acceder � plus d'informations sur les personnes inscrites au
     site en vous connectant</li>
 </ul>
-<%--<a href="/gestionnaireAnnuaire/actions/connexion/inscription">Vous pouvez vous inscrire ici</a>--%>
+<a href="/actions/connexion/inscription">Vous pouvez vous inscrire ici</a>
 <!--
     <a href="">Liste des personnes</a>
 
@@ -35,4 +29,6 @@
     -->
 
 </body>
+
+
 </html>

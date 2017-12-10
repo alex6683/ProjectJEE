@@ -26,5 +26,5 @@ public interface BeanToResultSet<T> {
      * @return : Le ResulSet correspondant aux informations relatives au bean dans la base de donnée
      * @throws DAOMapperException
      */
-    ResultSet toResultSet(T bean, PreparedStatement preparedStatement) throws DAOMapperException;
+    ResultSet toResultSet(T bean, PreparedStatement preparedStatement, Object... params) throws DAOMapperException;
 }

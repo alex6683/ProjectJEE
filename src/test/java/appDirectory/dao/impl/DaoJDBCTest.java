@@ -14,13 +14,15 @@ import javax.sql.DataSource;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Classe de Test de la class PersonDaoJDBC
  */
 @SuppressWarnings("Duplicates")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/spring/spring.xml")
+@ContextConfiguration(locations = "/spring.xml")
 public class DaoJDBCTest {
 
     @Autowired
@@ -139,15 +141,37 @@ public class DaoJDBCTest {
 
     @Test
     public void savePerson() {
-
+        jdbc.saveGroup(group);
+        person1.setGroupID(group);
+        assertFalse(jdbc.savePerson(person1));
+        assertEquals(1, jdbc.countRow("select count(*) from Person where name like '%Test%'"));
+        person1.setName("newNameSavedTest");
+        assertTrue(jdbc.savePerson(person1)) ;
+        assertEquals(jdbc.findPerson(person1).getName(), "newNameSavedTest");
     }
 
     @Test
     public void saveGroup() {
-        jdbc.saveGroup(group) ;
+        assertFalse(jdbc.saveGroup(group));
+        assertEquals(1,jdbc.countRow("select count(*) from `Group` where name like '%Test%'"));
         group.setName("newNameSavedTest");
-        jdbc.saveGroup(group) ;
+        assertTrue(jdbc.saveGroup(group)) ;
         assertEquals(jdbc.findGroup(group).getName(), "newNameSavedTest");
+    }
+    
+    @Test
+    public void findPersonWithKeyWord() {
+        jdbc.addGroup(group);
+        person1.setGroupID(group);
+        jdbc.addPerson(person1);
+
+        Person person2 = new Person() ;
+        person2.setName("TestBean1");
+        person2.setGroupID(group);
+        jdbc.addPerson(person2);
+
+        Collection<Person> persons = jdbc.findPerson("TestBean1") ;
+        assertEquals(2, persons.size());
     }
 
 }

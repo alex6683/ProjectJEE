@@ -2,13 +2,56 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+       http://www.springframework.org/schema/context/spring-context.xsd"
+       default-init-method="init"
+       default-destroy-method="destroy">
 
-    <bean name="/hello.htm" class="appDirectory.controller.DispatcherController" />
+    <context:component-scan base-package="appDirectory.controller" />
+    <context:component-scan base-package="appDirectory.web" />
+    <context:component-scan base-package="appDirectory.model" />
+    <context:component-scan base-package="appDirectory.dao.impl" />
+
+    <bean id="personEntity" class="appDirectory.model.Person">
+        <property name="identifier" value="-1"/>
+    </bean>
+
+    <bean id="groupEntity" class="appDirectory.model.Group">
+        <property name="identifier" value="-1"/>
+    </bean>
+
+    <bean
+            id="dataSource"
+            class="org.apache.commons.dbcp2.BasicDataSource"
+            p:url="jdbc:mysql://localhost:9999/m12017293"
+            p:username="m12017293"
+            p:password=".?+NSr3P"
+            p:defaultAutoCommit="false"
+            p:initialSize="5"
+            p:maxTotal="5"
+            p:driverClassName="com.mysql.jdbc.Driver"
+    />
+
+
+    <bean name="/accueil.htm" class="appDirectory.controller.DispatcherController" />
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass"
+                  value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- support JSR303 annotation -->
+    <mvc:annotation-driven enable-matrix-variables="true" />
 
 </beans>
+
