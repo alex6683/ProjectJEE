@@ -25,28 +25,12 @@
 			</tr>
 		</c:forEach>
 	</table>
-	<%--<tr>--%>
-	<%--<c:forEach items="${groupsList}" var="groupInList">--%>
-	<%--<td><a--%>
-	<%--href="${pageContext.request.contextPath}/actions/person/showPersInGroup?id=${groupInList.identifier}">--%>
-	<%--${groupInList.name}</a>--%>
-	<%--<c:if test="${personLogged != null}">--%>
-	<%--<td>--%>
-	<%--<a--%>
-	<%--href="${pageContext.request.contextPath}/actions/lists/deleteGroup?id=${groupInList.identifier}">--%>
-	<%--Supprimer</a>--%>
-	<%--</c:if>--%>
-	<%--</td>--%>
-	<%--</td>--%>
-
-	<%--</c:forEach>--%>
-	<%--</tr>--%>
 </div>
 
 <c:if test="${personLogged != null}">
-	<p>
-		<a href="${pageContext.request.contextPath}/actions/group/addGroup">Ajouter un nouveau groupe</a>
-	</p>
+	<tr>
+		<td colspan="3">
+			<a href="${pageContext.request.contextPath}/actions/group/addGroup" class="btn btn-info" >Ajouter un groupe</a>
+		</td>
+	</tr>
 </c:if>
-
-</body>

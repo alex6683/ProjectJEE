@@ -48,9 +48,12 @@
 			</tr>
 
 			<tr>
+				<td>Description :</td>
+				<td>${personLogged.description}</td>
+			</tr>
+
+			<tr>
 			<td><a href="editUser" class="btn btn-info">Editer votre profil</a></td>
-			<td><a href="${pageContext.request.contextPath}/actions/lists/personList" class="btn btn-info" >Personnes</a></td>
-			<td><a href="${pageContext.request.contextPath}/actions/lists/groupList" class="btn btn-info">Groupes</a></td>
 			<td><a href="log_out" class="btn btn-warning">Deconnexion</a></td>
 			<td>
 					<a href="deleteAccount?id=${personLogged.identifier}" class="btn btn-danger">

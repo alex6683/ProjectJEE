@@ -39,9 +39,6 @@
             p:driverClassName="com.mysql.jdbc.Driver"
     />
 
-
-    <bean name="/accueil.htm" class="appDirectory.controller.DispatcherController" />
-
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass"

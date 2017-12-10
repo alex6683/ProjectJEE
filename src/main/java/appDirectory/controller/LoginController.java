@@ -125,7 +125,7 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/inscription", method = RequestMethod.GET)
-	public String signUpPersonGet(HttpServletRequest request) {
+	public String signUpPersonGet(@ModelAttribute Person person, HttpServletRequest request) {
 		Collection<Group> allGroup = groupManager.findAllGroup();
 		request.getSession().setAttribute("listGroup", allGroup);
 		return "inscription";
@@ -135,7 +135,7 @@ public class LoginController {
 	public String signUpPerson(@ModelAttribute @Valid Person person, BindingResult result,
                                HttpServletRequest request) {
 
-		person.setGroupID(groupManager.findGroup(Integer.valueOf(request.getParameter("groupSignUp"))).getIdentifier());
+		person.setGroupID(groupManager.findGroupByName(request.getParameter("groupSignUp")).getIdentifier());
 
 		if (result.hasErrors()) {
 			return "inscription";

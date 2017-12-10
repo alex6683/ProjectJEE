@@ -76,16 +76,24 @@
 		<div class="form-group">
 			<label for="password" class="col-lg-2 control-label">Mot de passe</label>
 			<div class="col-lg-2">
-				<!-- 				<input type="password" class="form-control" id="password" placeholder="Password"> -->
-				<form:input path="password" value="${personLogged.password}"
-					class="form-control" />
+				<form:password path="password" value="${personLogged.password}" class="form-control" />
 				<small class="errors help-block"><form:errors
 						path="password" cssClass="error" /></small>
-
 			</div>
 		</div>
+
 		<div class="form-group">
-			<label for="" class="col-lg-2 control-label"></label>
+			<label for="description" class="col-lg-2 control-label">Description</label>
+			<div class="col-lg-2">
+				<form:input path="description" value="${personLogged.description}"
+							class="form-control" />
+				<small class="errors help-block"><form:errors
+						path="description" cssClass="error" /></small>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-lg-2 control-label"></label>
 			<div class="col-lg-2">
 					<input type="submit" class="btn btn-warning"
 			value="Enregistrer les modifications" />
@@ -93,8 +101,3 @@
 		</div>
 	</fieldset>
 </form:form>
-
-
-
-</body>
-</html>

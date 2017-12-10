@@ -9,16 +9,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${pageContext.request.contextPath}/accueil.htm">DirectoryManager</a>
+            <a class="navbar-brand" href="${pageContext.request.contextPath}/actions/home/homePage">DirectoryManager</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-collapse-3">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="${pageContext.request.contextPath}/accueil.htm">Accueil</a></li>
+                <%--<li><a href="${pageContext.request.contextPath}/accueil.htm">Accueil</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/actions/lists/personList">Personnes</a></li>
                 <li><a href="${pageContext.request.contextPath}/actions/lists/groupList">Groupes</a></li>
-                <li><a href="${pageContext.request.contextPath}/actions/connexion/test">Tests</a></li>
                 <c:if test="${personLogged == null}">
                     <li><a href="${pageContext.request.contextPath}/actions/connexion/login">Connection</a></li>
                 </c:if>
@@ -26,7 +25,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="supportedContentDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mon compte</a>
                     <div class="dropdown-menu" aria-labelledby="supportedContentDropdown">
-                        <a class="dropdown-item " href="${pageContext.request.contextPath}/actions/connexion/user">Profil</a> </br>
+                        <a class="dropdown-item " href="${pageContext.request.contextPath}/actions/connexion/user">Profil</a> <br/>
                         <a class="dropdown-item " href="${pageContext.request.contextPath}/actions/connexion/log_out">Deconnection</a>
                     </div>
                     </c:if>

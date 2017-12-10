@@ -1,4 +1,3 @@
-
 <%@ include file="include.jsp"%>
 
 <!DOCTYPE html>
