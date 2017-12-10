@@ -22,5 +22,5 @@
 
 </head>
 <body>
-<%@ include file="navbar.jsp"%>
+<%@ include file="navigation.jsp"%>
 

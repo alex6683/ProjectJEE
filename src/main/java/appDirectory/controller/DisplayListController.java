@@ -42,7 +42,7 @@ public class DisplayListController {
 		Collection<Person> listPerson = personManager.findAllPerson();
     	HttpSession maSession = request.getSession();
     	maSession.setAttribute("personsList", listPerson);
-    	return "personList";
+    	return "listPerson";
     }
     
     @RequestMapping(value = "/deletePerson", method = RequestMethod.GET)
@@ -54,38 +54,18 @@ public class DisplayListController {
     }
     
     @RequestMapping(value = "/groupList", method = RequestMethod.GET)
-    public String displayGroups(@ModelAttribute Group g, HttpServletRequest request) {
+    public String displayGroups(@ModelAttribute Group group, HttpServletRequest request) {
     	Collection<Group> listGroup = groupManager.findAllGroup();
     	HttpSession maSession = request.getSession();
     	maSession.setAttribute("groupsList", listGroup);
-    	return "groupList";
+    	return "listGroup";
     }
     
     @RequestMapping(value = "/deleteGroup", method = RequestMethod.GET)
-    public String deleteGroup(@ModelAttribute Group group, HttpServletRequest request,
-                              @RequestParam(value = "id") Integer id) {
-    	System.out.println("DeleteGroup in DisplayListController");
-    	group.setIdentifier(id);
+    public String deleteGroup(@ModelAttribute Group group,
+                              @RequestParam(value = "id") Integer groupID) {
+    	group.setIdentifier(groupID);
 		groupManager.deleteGroup(group);
     	return "redirect:groupList";
     }
-    
-    
-
-//    @RequestMapping(value = "/editPerson", method = RequestMethod.GET)
-//    public String editPerson(@ModelAttribute Group g, HttpServletRequest request) {
-//System.out.println("GET");
-//    	return "editPerson";
-//    }
-//    
-//    @RequestMapping(value = "/editPerson", method = RequestMethod.POST)
-//    public String editPerson(@ModelAttribute Group g, BindingResult result,  HttpServletRequest request) {
-////    	Collection<Person> listPerson = personManager.findAllPerson();
-////    	System.out.println("COUCOUECOIJOKEJKLCJEZKL");
-////    	HttpSession maSession = request.getSession();
-////		maSession.setAttribute("listPersons", listPerson);
-//    	System.out.println("POST");
-//		return "personList";
-//    }
-
 }

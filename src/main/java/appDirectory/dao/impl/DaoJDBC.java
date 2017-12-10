@@ -85,21 +85,21 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
     public Collection<Person> findAllPerson() throws DAOException {
         return findBeans(
-                "select * from Person",
+                "select * from Person ORDER BY name, surname",
                 DaoJDBC::resultSetToPerson
         );
     }
 
     public Collection<Group> findAllGroups() throws DAOException {
         return findBeans(
-                "select * from `Group`",
+                "select * from `Group` ORDER BY name",
                 DaoJDBC::resultSetToGroup
         );
     }
 
     public Collection<Person> findAllPersonInGroup(Group group) throws DAOException {
         return findBeans(
-                "select * from Person where groupID = ?",
+                "select * from Person where groupID = ? ORDER BY name, surname",
                 DaoJDBC::resultSetToPerson,
                 group.getIdentifier()
         );
@@ -107,7 +107,7 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
     public Collection<Person> findAllPersonInGroup(Integer groupID) throws DAOException {
         return findBeans(
-                "select * from Person where groupID = ?",
+                "select * from Person where groupID = ? ORDER BY name, surname",
                 DaoJDBC::resultSetToPerson,
                 groupID
         );
@@ -127,7 +127,7 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
     public Collection<Person> findPerson(Object keyWord) {
         return findBeans(
-                "select * from Person where name like ? or surname like ? or email like ?",
+                "select * from Person where name like ? or surname like ? or email like ? ORDER BY name, surname",
                 DaoJDBC::resultSetToPerson,
                 keyWord, keyWord, keyWord
         ) ;
@@ -156,7 +156,7 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
     public Collection<Group> findGroup(String keyWord) throws DAOException {
         return findBeans(
-                "select * from `Group` where name like ?",
+                "select * from `Group` where name like ? order by name",
                 DaoJDBC::resultSetToGroup,
                 keyWord
         ) ;
@@ -172,14 +172,12 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
 
     public boolean loginPerson(String login, String password) {
         Collection<Person> persons = findPerson(login) ;
-//        if(persons.size() == 1) {
-        Person person = persons.iterator().next() ;
-        if(person != null && person.getPassword().equals(password)) {
-            return true ;
+        if(!persons.isEmpty()) {
+            Person person = persons.iterator().next();
+            if (person != null && person.getPassword().equals(password)) {
+                return true;
+            }
         }
-//        } else {
-//            throw new IllegalStateException("login non unique") ;
-//        }
         return false ;
     }
 

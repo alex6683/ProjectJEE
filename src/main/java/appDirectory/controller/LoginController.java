@@ -50,7 +50,6 @@ public class LoginController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(@ModelAttribute Person person, BindingResult result) {
-		logger.info("Running as projet " + this);
 		return "login";
 	}
 
@@ -67,14 +66,14 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
-	public String displayUserInformation(@ModelAttribute Person p, @ModelAttribute Group g, HttpServletRequest request) {
+	public String displayUserData(@ModelAttribute Person p, @ModelAttribute Group g, HttpServletRequest request) {
 		if(request.getSession().getAttribute("personLogged") == null)
 			return "redirect:login";
 		return "user";
 	}
 
 	@RequestMapping(value = "/editUser", method = RequestMethod.GET)
-	public String editUserInformation(@ModelAttribute Person p, HttpServletRequest request) {
+	public String editUserData(@ModelAttribute Person p, HttpServletRequest request) {
 		if(request.getSession().getAttribute("personLogged") == null)
 			return "redirect:login";
 		HttpSession session = request.getSession();
@@ -87,36 +86,30 @@ public class LoginController {
 
 
 	@RequestMapping(value = "/editUser", method = RequestMethod.POST)
-	public String updatePerson(@ModelAttribute @Valid Person person, BindingResult result, HttpServletRequest request) {
+	public String editUserData(@ModelAttribute @Valid Person person, BindingResult result, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 	    Person personSession = (Person) session.getAttribute("personLogged");
         person.setIdentifier(personSession.getIdentifier());
-
-
 	    if (result.hasErrors()) {
             return "editUser";
 	    }
-
 		Group group = groupManager.findGroupByName(request.getParameter("groups"));
-
         person.setGroupID(group.getIdentifier());
-
 	    personManager.savePerson(person) ;
-
 		session.setAttribute("groupPersonLogged", group);
 	    session.setAttribute("personLogged", person);
 	    return "user";
 	}
 
 
-	@RequestMapping(value = "/log_out", method = RequestMethod.GET)
+	@RequestMapping(value = "/logOut", method = RequestMethod.GET)
 	public String logOutUser(HttpServletRequest request) {
 		request.getSession().setAttribute("personLogged", null);
 		return "redirect:login";
 	}
 
-	@RequestMapping(value = "/deleteAccount", method = RequestMethod.GET)
-	public String deletePerson(@ModelAttribute Person person, HttpServletRequest request,
+	@RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
+	public String deleteUser(@ModelAttribute Person person, HttpServletRequest request,
                                @RequestParam(value = "id") Integer id) {
 		person.setIdentifier(id);
 		personManager.deletePerson(person);
@@ -124,21 +117,19 @@ public class LoginController {
 		return "redirect:login";
 	}
 
-	@RequestMapping(value = "/inscription", method = RequestMethod.GET)
-	public String signUpPersonGet(@ModelAttribute Person person, HttpServletRequest request) {
+	@RequestMapping(value = "/registration", method = RequestMethod.GET)
+	public String signUp(@ModelAttribute Person person, HttpServletRequest request) {
 		Collection<Group> allGroup = groupManager.findAllGroup();
 		request.getSession().setAttribute("listGroup", allGroup);
-		return "inscription";
+		return "registration";
 	}
 
-	@RequestMapping(value = "/inscription", method = RequestMethod.POST)
-	public String signUpPerson(@ModelAttribute @Valid Person person, BindingResult result,
+	@RequestMapping(value = "/registration", method = RequestMethod.POST)
+	public String signUp(@ModelAttribute @Valid Person person, BindingResult result,
                                HttpServletRequest request) {
-
 		person.setGroupID(groupManager.findGroupByName(request.getParameter("groupSignUp")).getIdentifier());
-
 		if (result.hasErrors()) {
-			return "inscription";
+			return "registration";
 		}
 		personManager.savePerson(person);
 		return "redirect:login";

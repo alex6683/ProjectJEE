@@ -1,5 +1,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ include file="header.jsp"%>
+<%@ include file="head-bootstrap.jsp"%>
+
 <h1>Les informations de ${infoPerson.name} ${infoPerson.surname}</h1>
 
 <form:form method="POST" modelAttribute="person">
@@ -12,7 +13,7 @@
         <tr>
             <td>Groupe :</td>
             <td><a
-                    href="${pageContext.request.contextPath}/actions/person/showPersInGroup?id=${groupPersonListed.identifier}">
+                    href="${pageContext.request.contextPath}/actions/person/personInGroup?id=${groupPersonListed.identifier}">
                     ${groupPersonListed.name}</a>
             </td>
         </tr>

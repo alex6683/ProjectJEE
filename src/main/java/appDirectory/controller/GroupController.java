@@ -23,16 +23,16 @@ public class GroupController {
 	}
 
 	@RequestMapping(value = "/addGroup", method = RequestMethod.GET)
-	public String signUpPersonGet(Group group) {
-	    return "ajoutGroupe";
+	public String addGroup(Group group) {
+	    return "addGroup";
 	}
 	
 	@RequestMapping(value = "/addGroup", method = RequestMethod.POST)
-	public String signUpPerson(@ModelAttribute @Valid Group g, BindingResult result, HttpServletRequest request) {
+	public String addGroup(@ModelAttribute @Valid Group group, BindingResult result, HttpServletRequest request) {
 	    if (result.hasErrors()) {
-	        return "ajoutGroupe";
+	        return "addGroup";
 	    }
-	    groupManager.saveGroup(g);
+	    groupManager.saveGroup(group);
 	    return "redirect:/actions/lists/groupList";
 	}
 }

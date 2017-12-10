@@ -1,7 +1,5 @@
-<!-- Second navbar for search -->
 <nav class="navbar navbar-inverse">
     <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-3">
                 <span class="sr-only">Toggle navigation</span>
@@ -11,11 +9,8 @@
             </button>
             <a class="navbar-brand" href="${pageContext.request.contextPath}/actions/home/homePage">DirectoryManager</a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-collapse-3">
             <ul class="nav navbar-nav navbar-right">
-                <%--<li><a href="${pageContext.request.contextPath}/accueil.htm">Accueil</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/actions/lists/personList">Personnes</a></li>
                 <li><a href="${pageContext.request.contextPath}/actions/lists/groupList">Groupes</a></li>
                 <c:if test="${personLogged == null}">
@@ -26,7 +21,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="supportedContentDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mon compte</a>
                     <div class="dropdown-menu" aria-labelledby="supportedContentDropdown">
                         <a class="dropdown-item " href="${pageContext.request.contextPath}/actions/connexion/user">Profil</a> <br/>
-                        <a class="dropdown-item " href="${pageContext.request.contextPath}/actions/connexion/log_out">Deconnection</a>
+                        <a class="dropdown-item " href="${pageContext.request.contextPath}/actions/connexion/logOut">Deconnection</a>
                     </div>
                     </c:if>
                 <li>

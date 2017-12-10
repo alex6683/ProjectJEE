@@ -1,7 +1,5 @@
 package appDirectory.controller;
 
-import appDirectory.model.Group;
-import appDirectory.model.Person;
 import appDirectory.web.GroupManager;
 import appDirectory.web.PersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +29,12 @@ public class SearchController {
     }
 
     @RequestMapping(value="/search", method = RequestMethod.GET)
-	public String searchPerson(HttpServletRequest request , @RequestParam(value = "personSearcher", required = false) String search){
+	public String searchElements(HttpServletRequest request , @RequestParam(value = "personSearcher", required = false) String search){
 		HttpSession session = request.getSession();
 		session.setAttribute("resultSearchPerson", personManager.searchPerson(search));
 		session.setAttribute("resultSearchGroup", groupManager.searchGroup(search));
-
-		return "resultSearch";
+        session.setAttribute("personSearcher", search);
+		return "searchResult";
 	}
 
 }

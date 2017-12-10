@@ -77,10 +77,7 @@ public class DaoJDBCTest {
     @Test
     public void findAllPersonTest() {
         Collection<Person> all = jdbc.findAllPerson() ;
-        for(Person person : all) {
-            System.out.println("person = " + person.getName()) ;
-            System.out.println("person = " + person.getIdentifier()) ;
-        }
+        assertEquals(jdbc.countRow("select count(*) from Person"), all.size());
     }
 
     @Test

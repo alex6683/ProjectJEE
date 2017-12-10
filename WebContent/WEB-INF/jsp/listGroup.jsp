@@ -1,5 +1,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ include file="header.jsp"%>
+<%@ include file="head-bootstrap.jsp"%>
+
 <h1>Liste des groupes</h1>
 
 <div>
@@ -7,21 +8,17 @@
 		<c:forEach items="${groupsList}" var="groupInList">
 			<tr>
 				<td>
-					<a href="${pageContext.request.contextPath}/actions/person/showPersInGroup?id=${groupInList.identifier}">
+					<a href="${pageContext.request.contextPath}/actions/person/personInGroup?id=${groupInList.identifier}">
 							${groupInList.name}
 					</a>
 				</td>
 				<c:if test="${personLogged != null}">
-
-					<td>
-							<%--EDIT ICI--%>
-					</td>
 					<td>
 						<a href="${pageContext.request.contextPath}/actions/lists/deleteGroup?id=${groupInList.identifier}">
-							Supprimer</a>
+							Supprimer groupe vide
+						</a>
 					</td>
 				</c:if>
-
 			</tr>
 		</c:forEach>
 	</table>

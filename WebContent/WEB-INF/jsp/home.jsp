@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/header.jsp" %><html>
+<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp" %><html>
 
 <head>
     <title>index</title>
@@ -16,7 +16,7 @@
     <li>Acceder � plus d'informations sur les personnes inscrites au
         site en vous connectant</li>
 </ul>
-<a href="${pageContext.request.contextPath}/actions/connexion/inscription">Vous pouvez vous inscrire ici</a>
+<a href="${pageContext.request.contextPath}/actions/connexion/registration">Vous pouvez vous inscrire ici</a>
 
 </body>
 

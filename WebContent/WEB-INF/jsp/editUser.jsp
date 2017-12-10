@@ -1,5 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ include file="header.jsp"%>
+<%@ include file="head-bootstrap.jsp"%>
 
 
 <form:form method="POST" commandName="person" class="form-horizontal">
@@ -19,9 +19,8 @@
 		<div class="form-group">
 			<label for="surname" class="col-lg-2 control-label">Prenom</label>
 			<div class="col-lg-2">
-				<!-- 				<input type="text" class="form-control" id="surname" placeholder="Pr�nom"> -->
 				<form:input path="surname" value="${personLogged.surname}"
-					class="form-control" />
+							class="form-control" />
 				<small class="errors help-block"><form:errors
 						path="surname" cssClass="error" /></small>
 			</div>
@@ -30,9 +29,8 @@
 		<div class="form-group">
 			<label for="name" class="col-lg-2 control-label">Nom</label>
 			<div class="col-lg-2">
-				<!-- 				<input type="text" class="form-control" id="name" placeholder="Nom"> -->
 				<form:input path="name" value="${personLogged.name}"
-					class="form-control" />
+							class="form-control" />
 				<small class="errors help-block"><form:errors
 						path="name" cssClass="error" /></small>
 			</div>
@@ -41,11 +39,10 @@
 		<div class="form-group">
 			<label for="email" class="col-lg-2 control-label">Email</label>
 			<div class="col-lg-2">
-				<!-- 				<input type="text" class="form-control" id="email"	placeholder="Email"> -->
 				<form:input path="email" value="${personLogged.email}"
-					class="form-control" />
+							class="form-control" />
 				<small class="errors help-block"><form:errors path="email"
-						cssClass="error" /></small>
+															  cssClass="error" /></small>
 
 			</div>
 		</div>
@@ -53,11 +50,10 @@
 		<div class="form-group">
 			<label for="webSite" class="col-lg-2 control-label">Site web</label>
 			<div class="col-lg-2">
-				<!-- 				<input type="text" class="form-control" id="webSite" placeholder="Web"> -->
 				<form:input path="webSite" value="${personLogged.webSite}"
-					class="form-control" />
+							class="form-control" />
 				<small class="errors help-block"><form:errors path="webSite"
-						cssClass="error" /></small>
+															  cssClass="error" /></small>
 			</div>
 		</div>
 
@@ -65,7 +61,6 @@
 			<label for="dateBirth" class="col-lg-2 control-label">Date de
 				naissance</label>
 			<div class="col-lg-2">
-				<!--<input type="text" class="form-control" id="dateBirth" placeholder="Naissance"> -->
 				<fmt:formatDate value="${personLogged.dateBirth}" type="date" pattern="yyyy-MM-dd" var="formatedDate"/>
 				<form:input path="dateBirth" type="date" value ="${formatedDate}" class="form-control" />
 				<small class="errors help-block"><form:errors
@@ -95,9 +90,9 @@
 		<div class="form-group">
 			<label class="col-lg-2 control-label"></label>
 			<div class="col-lg-2">
-					<input type="submit" class="btn btn-warning"
-			value="Enregistrer les modifications" />
+				<input type="submit" class="btn btn-warning" value="Enregistrer" />
 			</div>
 		</div>
 	</fieldset>
+
 </form:form>

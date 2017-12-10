@@ -36,18 +36,18 @@ public class PersonController {
 		this.groupManager = groupManager;
 	}
 
-	@RequestMapping(value = "/showPerson", method = RequestMethod.GET)
-	public String displayInfoPers(@ModelAttribute Person person, HttpServletRequest request,
-								  @RequestParam(value = "id") Integer id){
-		Person pers = personManager.findPerson(id);
+	@RequestMapping(value = "/personData", method = RequestMethod.GET)
+	public String displayPersonData(@ModelAttribute Person person, HttpServletRequest request,
+								  @RequestParam(value = "id") Integer personID){
+		Person pers = personManager.findPerson(personID);
 		Group group = groupManager.findGroup(pers.getGroupID());
 		request.getSession().setAttribute("infoPerson", pers);
 		request.getSession().setAttribute("groupPersonListed", group);
 		return "infoPerson";
 	}
 
-	@RequestMapping(value = "/showPersInGroup", method = RequestMethod.GET)
-	public String displayPersInGroup(@ModelAttribute Person person, HttpServletRequest request,
+	@RequestMapping(value = "/personInGroup", method = RequestMethod.GET)
+	public String displayPersonInGroup(@ModelAttribute Person person, HttpServletRequest request,
                                      @RequestParam(value = "id") Integer id){
 		Group group = groupManager.findGroup(id) ;
 		Collection<Person> listPers = personManager.findAllPersonInGroup(id);
