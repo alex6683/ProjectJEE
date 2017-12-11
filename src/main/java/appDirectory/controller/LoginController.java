@@ -57,16 +57,16 @@ public class LoginController {
 	public String login(@ModelAttribute Person person, HttpServletRequest request){
 		if(loginManager.checkLogin(person) && loginManager.checkAuthentication(person) ){
 			Person pers = loginManager.personByMail(person);
-			HttpSession maSession = request.getSession();
-			maSession.setAttribute("personLogged", pers);
-			maSession.setAttribute("groupPersonLogged", groupManager.findGroup(pers.getGroupID()));
+			HttpSession session = request.getSession();
+			session.setAttribute("personLogged", pers);
+			session.setAttribute("groupPersonLogged", groupManager.findGroup(pers.getGroupID()));
 			return "redirect:user";
 		}
 		return "login";
 	}
 
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
-	public String displayUserData(@ModelAttribute Person p, @ModelAttribute Group g, HttpServletRequest request) {
+	public String displayUserData(@ModelAttribute Person person, @ModelAttribute Group group, HttpServletRequest request) {
 		if(request.getSession().getAttribute("personLogged") == null)
 			return "redirect:login";
 		return "user";
@@ -93,7 +93,7 @@ public class LoginController {
 	    if (result.hasErrors()) {
             return "editUser";
 	    }
-		Group group = groupManager.findGroupByName(request.getParameter("groups"));
+		Group group = groupManager.findGroupByName(request.getParameter("group"));
         person.setGroupID(group.getIdentifier());
 	    personManager.savePerson(person) ;
 		session.setAttribute("groupPersonLogged", group);

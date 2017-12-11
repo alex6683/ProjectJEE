@@ -38,21 +38,23 @@ public class PersonController {
 
 	@RequestMapping(value = "/personData", method = RequestMethod.GET)
 	public String displayPersonData(@ModelAttribute Person person, HttpServletRequest request,
-								  @RequestParam(value = "id") Integer personID){
-		Person pers = personManager.findPerson(personID);
-		Group group = groupManager.findGroup(pers.getGroupID());
-		request.getSession().setAttribute("infoPerson", pers);
-		request.getSession().setAttribute("groupPersonListed", group);
+								  @RequestParam(value = "id") Integer personID
+	){
+		Person newPerson = personManager.findPerson(personID);
+		Group newGroup = groupManager.findGroup(newPerson.getGroupID());
+		request.getSession().setAttribute("personData", newPerson);
+		request.getSession().setAttribute("groupData", newGroup);
 		return "infoPerson";
 	}
 
 	@RequestMapping(value = "/personInGroup", method = RequestMethod.GET)
 	public String displayPersonInGroup(@ModelAttribute Person person, HttpServletRequest request,
-                                     @RequestParam(value = "id") Integer id){
-		Group group = groupManager.findGroup(id) ;
-		Collection<Person> listPers = personManager.findAllPersonInGroup(id);
-		request.getSession().setAttribute("groupCurrentlyViewed", group);
-		request.getSession().setAttribute("persInGroup", listPers);
+                                     @RequestParam(value = "id") Integer groupID
+	){
+		Group group = groupManager.findGroup(groupID) ;
+		Collection<Person> personList = personManager.findAllPersonInGroup(groupID);
+		request.getSession().setAttribute("currentGroup", group);
+		request.getSession().setAttribute("personsInGroup", personList);
 		return "infoGroup";
 	}
 

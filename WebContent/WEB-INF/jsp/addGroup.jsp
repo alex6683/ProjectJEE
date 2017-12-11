@@ -1,7 +1,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ include file="head-bootstrap.jsp"%>
 
-<form:form method="POST" commandName="group">
+<div class="container">
+    <legend><h1>Ajout d'un groupe</h1></legend>
+    <form:form method="POST" commandName="group">
     <table>
         <tr>
             <td>Nom du groupe : </td>
@@ -11,4 +13,5 @@
             <td colspan="3"><input type="submit" value="Ajouter" class="btn btn-info" /></td>
         </tr>
     </table>
-</form:form>
+    </form:form>
+</div>

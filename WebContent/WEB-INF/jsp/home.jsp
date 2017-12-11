@@ -1,23 +1,32 @@
-<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp" %><html>
+<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp" %>
 
-<head>
-    <title>index</title>
-</head>
+<html>
+
 <body>
-<h1>Accueil</h1>
+<div class="container">
 
-<p>Bienvenue sur la page d'accueil du gestionnaire d'annuaire des
-    �tudiants de master informatique de l'universit� d'Aix-Marseille</p>
-<p>Vous pouvez effectuer les actions suivantes :</p>
-<ul class="table table-striped table-hover ">
-    <li>S'inscrire au site</li>
-    <li>Visualiser les personnes inscrites dans l'annuaire</li>
-    <li>Visualiser les groupes disponibles dans l'annuaire</li>
-    <li>Acceder � plus d'informations sur les personnes inscrites au
-        site en vous connectant</li>
-</ul>
-<a href="${pageContext.request.contextPath}/actions/connexion/registration">Vous pouvez vous inscrire ici</a>
+    <legend><h1>Accueil</h1></legend>
 
+    <p>Bienvenue dans le gestionnaire d'annuaire d'Aix Marseille universite.
+        Cette annuaire offre la possibilite de rechercher des personnes et les groupes auquels ils appartiennents</p>
+    <p>Voici les differentes fonctionnalites : </p>
+    <ul class="table table-striped table-hover ">
+        <li>Lister les personnes de l'annuaire</li>
+        <li>Lister les groupes de l'annuaire</li>
+        <li>Rechercher avec des mots clefs</li>
+        <li>Acceder aux informations des personnes</li>
+        <li>S'authentifer pour augmenter les privileges</li>
+        <li>
+            <ul>
+                <li>D'acces aux informations detaillees des personnes</li>
+                <li>D'ajout de nouveaux groupes dans l'annuaire</li>
+                <li>De gestion du compte</li>
+            </ul>
+        </li>
+    </ul>
+    <p><a href="${pageContext.request.contextPath}/actions/connexion/registration">Inscrivez-vous </a> pour acceder aux privileges</p>
+
+</div>
 </body>
 
 

@@ -1,57 +1,60 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ include file="head-bootstrap.jsp"%>
 
-<h1>Les informations de ${infoPerson.name} ${infoPerson.surname}</h1>
+<div class="container">
 
-<form:form method="POST" modelAttribute="person">
-    <table>
-        <tr>
-            <td>Identifiant :</td>
-            <td>${infoPerson.identifier}</td>
-        </tr>
+   <lengend><h1>Les informations de ${personData.name} ${personData.surname}</h1></lengend>
 
-        <tr>
-            <td>Groupe :</td>
-            <td><a
-                    href="${pageContext.request.contextPath}/actions/person/personInGroup?id=${groupPersonListed.identifier}">
-                    ${groupPersonListed.name}</a>
-            </td>
-        </tr>
-        <tr>
-            <td>Prenom :</td>
-            <td>${infoPerson.surname}</td>
-        </tr>
-
-        <tr>
-            <td>Nom :</td>
-            <td>${infoPerson.name}</td>
-        </tr>
-
-        <c:if test="${personLogged != null}">
+    <form:form method="POST" modelAttribute="person">
+        <table>
             <tr>
-                <td>Email :</td>
-                <td>${infoPerson.email}</td>
+                <td>Identifiant :</td>
+                <td>${personData.identifier}</td>
             </tr>
-        </c:if>
 
-        <tr>
-            <td>Site web :</td>
-            <td>
-                <a target="_blank" href="${infoPerson.webSite}">
-                        ${infoPerson.webSite}
-                </a>
-            </td>
-        </tr>
-
-        <c:if test="${personLogged != null}">
             <tr>
-                <td>Naissance :</td>
-                <td>${infoPerson.dateBirth}</td>
+                <td>Groupe :</td>
+                <td><a
+                        href="${pageContext.request.contextPath}/actions/person/personInGroup?id=${groupData.identifier}">
+                        ${groupData.name}</a>
+                </td>
             </tr>
-        </c:if>
-        <tr>
-            <td>Description :</td>
-            <td>${infoPerson.description}</td>
-        </tr>
-    </table>
-</form:form>
+            <tr>
+                <td>Prenom :</td>
+                <td>${personData.surname}</td>
+            </tr>
+
+            <tr>
+                <td>Nom :</td>
+                <td>${personData.name}</td>
+            </tr>
+
+            <c:if test="${personLogged != null}">
+                <tr>
+                    <td>Email :</td>
+                    <td>${personData.email}</td>
+                </tr>
+            </c:if>
+
+            <tr>
+                <td>Site web :</td>
+                <td>
+                    <a target="_blank" href="${personData.webSite}">
+                            ${personData.webSite}
+                    </a>
+                </td>
+            </tr>
+
+            <c:if test="${personLogged != null}">
+                <tr>
+                    <td>Naissance :</td>
+                    <td>${personData.dateBirth}</td>
+                </tr>
+            </c:if>
+            <tr>
+                <td>Description :</td>
+                <td>${personData.description}</td>
+            </tr>
+        </table>
+    </form:form>
+</div>

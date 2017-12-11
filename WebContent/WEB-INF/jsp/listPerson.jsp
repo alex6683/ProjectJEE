@@ -1,16 +1,18 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ include file="head-bootstrap.jsp"%>
 
-<h1>Liste des personnes</h1>
-
-<div>
-    <ul style="list-style-type: circle">
-        <c:forEach items="${personsList}" var="personInList">
+<div class="container">
+    <legend><h1>Liste des personnes</h1></legend>
+    <div>
+        <ul style="list-style-type: circle">
+            <c:forEach items="${listPersons}" var="person">
                 <li>
-                    <a href="${pageContext.request.contextPath}/actions/person/personData?id=${personInList.identifier}">
-                            ${personInList.name} ${personInList.surname}
+                    <a href="${pageContext.request.contextPath}/actions/person/personData?id=${person.identifier}">
+                            ${person.name} ${person.surname}
                     </a>
                 </li>
-        </c:forEach>
-    </ul>
+            </c:forEach>
+        </ul>
+    </div>
 </div>
+

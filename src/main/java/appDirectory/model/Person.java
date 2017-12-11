@@ -3,6 +3,7 @@ package appDirectory.model;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.sql.Date;
 
@@ -35,6 +36,7 @@ public class Person implements Serializable {
     /**
      * Email de la Personne avec valeur par défaut
      */
+    @Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-_]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message="Adresse mail invalide : exemple@exemple.com")
     private String email = "prenom.nom@etu.univ-mrs.fr" ;
     /**
      * Site web de la Personne

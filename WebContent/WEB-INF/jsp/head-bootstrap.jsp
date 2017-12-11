@@ -21,6 +21,15 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </head>
+<style>
+	body{
+		background: lightgray ;
+		-webkit-background-size: cover ;
+		-moz-background-size: cover ;
+		-o-background-size: cover ;
+		background-size: cover ;
+	}
+</style>
 <body>
 <%@ include file="navigation.jsp"%>
 
