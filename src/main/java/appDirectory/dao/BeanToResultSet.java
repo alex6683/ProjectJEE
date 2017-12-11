@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Risch Philippe
  *
  * @date 21/10/2017
- * @version 1.0
+ * @version 1.1
  *
  * @param <T> : La classe du bean
  */

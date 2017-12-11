@@ -1,7 +1,7 @@
 package appDirectory.controller;
 
 import appDirectory.model.Group;
-import appDirectory.web.GroupManager;
+import appDirectory.manager.GroupManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -12,6 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
+/**
+ * Controller
+ * Gestion de l'ajout de groupe de l'application
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 23/10/2017
+ * @version 1.0
+ */
 @Controller
 @RequestMapping("/group")
 public class GroupController {

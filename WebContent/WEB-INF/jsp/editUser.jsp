@@ -23,7 +23,6 @@
 								class="form-control" />
 					<small class="errors help-block"><form:errors
 							path="surname" cssClass="error" /></small>
-					<small class=
 				</div>
 			</div>
 

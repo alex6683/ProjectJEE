@@ -1,56 +1,78 @@
 package appDirectory.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Date;
 
 
 /**
  * L'entité Personne. Représente une Personne et ses metadonnées.
+ * Chaque champs est défini par des contraintes spécifiques.
  *
  * @author Mestrallet Alexis
  * @author Risch Philippe
  *
  * @date 19/10/2017
- * @version 1.0
+ * @version 2.0
  */
+
 public class Person implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Identification de la Personne
      */
-	private Integer identifier = -1 ;
+    private Integer identifier = -1 ;
     /**
      * Nom de la Personne
      */
+    @NotNull
+    @NotEmpty(message = "Un nom est attendu")
     private String name ;
     /**
-     * Prénom de la Personne
+     * Prenom de la Personne
      */
+    @NotNull
+    @NotEmpty(message = "Un prenom est attendu")
     private String surname ;
     /**
      * Email de la Personne avec valeur par défaut
      */
-    @Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-_]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message="Adresse mail invalide : exemple@exemple.com")
+    @NotNull
+    @Pattern(
+            regexp="^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-_]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",
+            message="Email invalide : exemple@exemple.com"
+    )
     private String email = "prenom.nom@etu.univ-mrs.fr" ;
     /**
      * Site web de la Personne
      */
+    @NotNull
+    @Pattern(regexp="^(http://[a-zA-Z0-9.-][a-zA-Z0-9.-]*.[a-zA-Z]{2,3})?$", message="Site web invalide : http://exemple.com")
     private String webSite ;
     /**
      * Date de naissance de la Personne
      */
-    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
+    @NotNull
+    @Past(message = "Date de naissance anterieur a la date d'aujourd'hui attendu")
     private Date dateBirth ;
     /**
      * Mot de passe de la Personne avec valeur par défaut
      */
-    private String password = "admin" ;
+    @NotNull
+    @Size(min = 8, message = "8 caracteres minimum requis")
+    @Pattern(
+            regexp="((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$",
+            message="Mot de passe trop faible, Majuscule + minuscule + nombre + caractere special attendu"
+    )
+    private String password ;
     /**
      * Description de la Personne
      */

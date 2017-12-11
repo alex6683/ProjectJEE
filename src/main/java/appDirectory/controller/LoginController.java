@@ -3,9 +3,9 @@ package appDirectory.controller;
 
 import appDirectory.model.Group;
 import appDirectory.model.Person;
-import appDirectory.web.GroupManager;
-import appDirectory.web.LoginManager;
-import appDirectory.web.PersonManager;
+import appDirectory.manager.GroupManager;
+import appDirectory.manager.LoginManager;
+import appDirectory.manager.PersonManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,16 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Collection;
 
+/**
+ * Controller
+ * Gestion de l'utilisateur et de son authentification dans l'application
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 23/10/2017
+ * @version 1.0
+ */
 @Controller
 @RequestMapping("/connexion")
 public class LoginController {
@@ -78,7 +88,7 @@ public class LoginController {
 			return "redirect:login";
 		HttpSession session = request.getSession();
 	    Person personSession = (Person) session.getAttribute("personLogged");
-	    Group group = groupManager.findGroup(personSession.getGroupID());
+		Group group = groupManager.findGroup(personSession.getGroupID());
 		Collection<Group> allGroup = groupManager.findAllGroupWithGroupInFirst(group);
 		request.getSession().setAttribute("listGroup", allGroup);
 		return "editUser";
@@ -88,7 +98,7 @@ public class LoginController {
 	@RequestMapping(value = "/editUser", method = RequestMethod.POST)
 	public String editUserData(@ModelAttribute @Valid Person person, BindingResult result, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-	    Person personSession = (Person) session.getAttribute("personLogged");
+        Person personSession = (Person) session.getAttribute("personLogged");
         person.setIdentifier(personSession.getIdentifier());
 	    if (result.hasErrors()) {
             return "editUser";

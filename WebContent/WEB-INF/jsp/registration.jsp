@@ -40,7 +40,6 @@
 				<div class="col-lg-2">
 					<form:input path="email" value="${personLogged.email}" class="form-control" />
 					<small class="errors help-block"><form:errors path="email" cssClass="error" /></small>
-
 				</div>
 			</div>
 
@@ -55,7 +54,8 @@
 			<div class="form-group">
 				<label for="dateBirth" class="col-lg-2 control-label">Date de naissance</label>
 				<div class="col-lg-2">
-					<form:input path="dateBirth" value="${personLogged.dateBirth}" class="form-control"/>
+					<fmt:formatDate value="${personLogged.dateBirth}" type="date" pattern="yyyy-MM-dd" var="formatedDate"/>
+					<form:input path="dateBirth" type="date" value="${formatedDate}" class="form-control"/>
 					<small class="errors help-block"><form:errors path="dateBirth" cssClass="error" /></small>
 				</div>
 			</div>

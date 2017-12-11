@@ -11,6 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Controller
+ * Gestion de la partie accueil de l'application
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 23/10/2017
+ * @version 1.0
+ */
 @Controller
 @RequestMapping("home")
 public class DispatcherController {

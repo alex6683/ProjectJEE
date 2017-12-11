@@ -137,7 +137,7 @@ public class DaoJDBCTest {
     }
 
     @Test
-    public void savePerson() {
+    public void savePersonTest() {
         jdbc.saveGroup(group);
         person1.setGroupID(group);
         assertFalse(jdbc.savePerson(person1));
@@ -148,7 +148,7 @@ public class DaoJDBCTest {
     }
 
     @Test
-    public void saveGroup() {
+    public void saveGroupTest() {
         assertFalse(jdbc.saveGroup(group));
         assertEquals(1,jdbc.countRow("select count(*) from `Group` where name like '%Test%'"));
         group.setName("newNameSavedTest");
@@ -157,7 +157,7 @@ public class DaoJDBCTest {
     }
     
     @Test
-    public void findPersonWithKeyWord() {
+    public void findPersonWithKeyWordTest() {
         jdbc.addGroup(group);
         person1.setGroupID(group);
         jdbc.addPerson(person1);

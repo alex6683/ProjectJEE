@@ -1,7 +1,7 @@
 package appDirectory.controller;
 
-import appDirectory.web.GroupManager;
-import appDirectory.web.PersonManager;
+import appDirectory.manager.GroupManager;
+import appDirectory.manager.PersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * Controller
+ * Gestion de la fonction de recherche de l'application
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 23/10/2017
+ * @version 1.0
+ */
 @Controller
 @RequestMapping("/searchBar")
 public class SearchController {
@@ -28,6 +38,12 @@ public class SearchController {
         this.groupManager = groupManager;
     }
 
+    /**
+     * Attribution de la liste de groupes et/ou personnes selon le critère de recherche
+     * @param request : La requête http
+     * @param search : Le critère de recherche
+     * @return la vue searchResult.jsp
+     */
     @RequestMapping(value="/search", method = RequestMethod.GET)
 	public String searchElements(HttpServletRequest request , @RequestParam(value = "personSearcher", required = false) String search){
 		HttpSession session = request.getSession();

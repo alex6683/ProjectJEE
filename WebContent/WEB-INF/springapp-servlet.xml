@@ -15,7 +15,7 @@
        default-destroy-method="destroy">
 
     <context:component-scan base-package="appDirectory.controller" />
-    <context:component-scan base-package="appDirectory.web" />
+    <context:component-scan base-package="appDirectory.manager" />
     <context:component-scan base-package="appDirectory.model" />
     <context:component-scan base-package="appDirectory.dao.impl" />
 

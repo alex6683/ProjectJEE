@@ -1,7 +1,7 @@
 package appDirectory.dao.impl;
 
 import appDirectory.dao.GroupDAO;
-import appDirectory.dao.PersonDao;
+import appDirectory.dao.PersonDAO;
 import appDirectory.exception.DAOException;
 import appDirectory.exception.DAOMapperException;
 import appDirectory.model.Group;
@@ -25,11 +25,14 @@ import java.util.Collection;
  * @author Risch Philippe
  *
  * @date 23/10/2017
- * @version 3.0
+ * @version 3.5
  */
 @Repository
-public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
+public class DaoJDBC extends SqlTools implements PersonDAO, GroupDAO {
 
+    /**
+     * Context pour la création de beans
+     */
     private static AbstractApplicationContext context =
             new ClassPathXmlApplicationContext("/spring/spring.xml");
 
@@ -74,15 +77,16 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
             addGroup(group) ;
             return false ;
         }
-        System.out.println("true = " + true);
         return true ;
     }
 
+    @Override
     public void addGroup(Group group) throws DAOException {
         int newId = insertBean("`Group`", DaoJDBC::groupToResulSet, group) ;
         group.setIdentifier(newId);
     }
 
+    @Override
     public Collection<Person> findAllPerson() throws DAOException {
         return findBeans(
                 "select * from Person ORDER BY name, surname",
@@ -90,6 +94,7 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         );
     }
 
+    @Override
     public Collection<Group> findAllGroups() throws DAOException {
         return findBeans(
                 "select * from `Group` ORDER BY name",
@@ -97,6 +102,7 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         );
     }
 
+    @Override
     public Collection<Person> findAllPersonInGroup(Group group) throws DAOException {
         return findBeans(
                 "select * from Person where groupID = ? ORDER BY name, surname",
@@ -105,6 +111,12 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         );
     }
 
+    /**
+     * Retrouve et renvoie toutes les personnes présentes dans un groupe donnée
+     * @param groupID : L'identifiant du groupe donné
+     * @return : La liste des personnes appartenant à group
+     * @throws DAOException
+     */
     public Collection<Person> findAllPersonInGroup(Integer groupID) throws DAOException {
         return findBeans(
                 "select * from Person where groupID = ? ORDER BY name, surname",
@@ -113,10 +125,12 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         );
     }
 
+    @Override
     public Person findPerson(Person person) throws DAOException {
         return this.findPerson(person.getIdentifier()) ;
     }
 
+    @Override
     public Person findPerson(Integer personID) throws DAOException {
         Collection<Person> onePerson = findBeans(
                 "select * from Person where personID = " + personID,
@@ -125,6 +139,7 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         return onePerson.toArray(new Person[1])[0] ;
     }
 
+    @Override
     public Collection<Person> findPerson(Object keyWord) {
         return findBeans(
                 "select * from Person where name like ? or surname like ? or email like ? ORDER BY name, surname",
@@ -133,10 +148,12 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         ) ;
     }
 
+    @Override
     public Group findGroup(Group group) throws DAOException {
         return this.findGroup(group.getIdentifier()) ;
     }
 
+    @Override
     public Group findGroup(Integer groupID) throws DAOException {
         Collection<Group> oneGroup = findBeans(
                 "select * from `Group` where groupID = " + groupID,
@@ -145,15 +162,22 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         return oneGroup.toArray(new Group[1])[0] ;
     }
 
-    public Group findOneGroup(String keyWord) throws DAOException {
+    /**
+     * Renvoie le groupe correspondant au nom passé en paramètre
+     * @param name : le nom du groupe
+     * @return : le groupe correspondant
+     * @throws DAOException
+     */
+    public Group findOneGroup(String name) throws DAOException {
         Collection<Group> oneGroup = findBeans(
                 "select * from `Group` where name like ?",
                 DaoJDBC::resultSetToGroup,
-                keyWord
+                name
         ) ;
         return oneGroup.toArray(new Group[1])[0] ;
     }
 
+    @Override
     public Collection<Group> findGroup(String keyWord) throws DAOException {
         return findBeans(
                 "select * from `Group` where name like ? order by name",
@@ -162,30 +186,37 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
         ) ;
     }
 
+    @Override
     public int deletePerson(Person person) throws DAOException {
         return deleteBeans("select * from Person where personID = ?", person.getIdentifier());
     }
 
+    @Override
     public int deleteGroup(Group group) throws DAOException {
         return deleteBeans("select * from `Group` where groupID = ?", group.getIdentifier());
     }
 
-    public boolean loginPerson(String login, String password) {
-        Collection<Person> persons = findPerson(login) ;
-        if(!persons.isEmpty()) {
-            Person person = persons.iterator().next();
-            if (person != null && person.getPassword().equals(password)) {
-                return true;
-            }
-        }
-        return false ;
+    /**
+     * Renvoie la liste de groupes avec le groupe passé en paramètre en tête de liste
+     * @param group : Le groupe en tête de liste
+     * @return : La liste de groupe
+     * @throws SQLException
+     */
+    public Collection<Group> findAllGroupWithParamInFirst(Group group) throws SQLException {
+        Collection<Group> listGroup= new ArrayList<Group>();
+        listGroup.add(group);
+        listGroup.addAll(findBeans(
+                "select * from `Group` where groupID != ?",
+                DaoJDBC::resultSetToGroup,
+                group.getIdentifier())
+        ) ;
+        return listGroup;
     }
 
-
     /**
-     * FOR FIND PURPOSE
-     * @param resultSet
-     * @return
+     * Map d'un resultSet à une personne
+     * @param resultSet : Le resultSet à mapper
+     * @return : La personne correspondante
      */
     static public Person resultSetToPerson(ResultSet resultSet) {
         Person person = new Person();
@@ -206,9 +237,9 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
     }
 
     /**
-     * FOR FIND PURPOSE
-     * @param resultSet
-     * @return
+     * Map d'un resultSet à un groupe
+     * @param resultSet : Le resultSet à mapper
+     * @return : Le groupe correspondante
      */
     static public Group resultSetToGroup(ResultSet resultSet) {
         Group group = new Group();
@@ -226,10 +257,11 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
     }
 
     /**
-     * AJOUT + UPDATE
-     * @param person
-     * @param sql
-     * @return
+     * Map d'une personne à insérer ou modifier en ResultSet
+     * @param person : La personne à mapper
+     * @param sql : La requête SQL correpondante
+     * @param params : Les paramètres de la requête SQL
+     * @return : le ResultSet correpondant
      * @throws DAOMapperException
      */
     static public ResultSet personToResulSet(Person person, PreparedStatement sql, Object... params) throws DAOMapperException {
@@ -262,10 +294,11 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
     }
 
     /**
-     * AJOUT + UPDATE
-     * @param group
-     * @param sql
-     * @return
+     * Map d'un groupe à modifier ou insérer en ResultSet
+     * @param group : Le groupe à mapper
+     * @param sql : La requête sql correspondante
+     * @param params : Les paramètres de la requête SQL
+     * @return : le ResultSet correspondant
      * @throws DAOMapperException
      */
     static public ResultSet groupToResulSet(Group group, PreparedStatement sql, Object... params) throws DAOMapperException {
@@ -288,28 +321,5 @@ public class DaoJDBC extends SqlTools implements PersonDao, GroupDAO {
             throw new DAOMapperException(e) ;
         }
         return resultSet ;
-    }
-
-    public Collection<Group> findAllGroupWithGroupInFirst(Group group) throws SQLException {
-        Collection<Group> listGroup= new ArrayList<Group>();
-        listGroup.add(group);
-        String query = "SELECT * FROM `Group` WHERE groupID!= "+ group.getIdentifier();
-
-        try (Connection conn = newConnection()){
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while (rs.next()) {
-                Group g = new Group();
-
-                g.setIdentifier( rs.getInt("groupID") );
-                g.setName( rs.getString("name") );
-                listGroup.add(g);
-            }
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException();
-        }
-        return listGroup;
     }
 }

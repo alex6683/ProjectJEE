@@ -2,8 +2,8 @@ package appDirectory.controller;
 
 import appDirectory.model.Group;
 import appDirectory.model.Person;
-import appDirectory.web.GroupManager;
-import appDirectory.web.PersonManager;
+import appDirectory.manager.GroupManager;
+import appDirectory.manager.PersonManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
+/**
+ * Controller
+ * Gestion de l'affichage des informations d'une personne de l'application
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 23/10/2017
+ * @version 1.0
+ */
 @Controller
 @RequestMapping("/person")
 public class PersonController {
@@ -36,6 +46,13 @@ public class PersonController {
 		this.groupManager = groupManager;
 	}
 
+	/**
+	 * Affiche les informations détaillées d'une personne
+	 * @param person : Le modele Person
+	 * @param request : La requête http
+	 * @param personID : L'identification de la personne
+	 * @return la vue infoPerson.jsp
+	 */
 	@RequestMapping(value = "/personData", method = RequestMethod.GET)
 	public String displayPersonData(@ModelAttribute Person person, HttpServletRequest request,
 								  @RequestParam(value = "id") Integer personID
@@ -47,6 +64,13 @@ public class PersonController {
 		return "infoPerson";
 	}
 
+	/**
+	 * Liste les personne présente dans un groupe donnée
+	 * @param person Le modele Person
+	 * @param request La requete http
+	 * @param groupID l'identifiant du groupe donnée
+	 * @return la vue infoGroup.jsp
+	 */
 	@RequestMapping(value = "/personInGroup", method = RequestMethod.GET)
 	public String displayPersonInGroup(@ModelAttribute Person person, HttpServletRequest request,
                                      @RequestParam(value = "id") Integer groupID

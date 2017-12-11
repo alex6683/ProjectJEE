@@ -57,7 +57,7 @@ public class SqlTools {
      * @return : La connection créée
      * @throws DAOConfigurationException Si la connection est impossible
      */
-    public Connection newConnection() throws DAOConfigurationException {
+    private Connection newConnection() throws DAOConfigurationException {
         return DataSourceUtils.getConnection(dataSource) ;
     }
 
@@ -134,7 +134,7 @@ public class SqlTools {
      * @return : La liste de JavaBean récupéré
      * @throws DAOException
      */
-    public <T> Collection<T> findBeans(String sql, ResultSetToBean<T> mapper, Object... params) throws DAOException {
+    protected <T> Collection<T> findBeans(String sql, ResultSetToBean<T> mapper, Object... params) throws DAOException {
         Collection<T> beans = new ArrayList<>() ;
         if(StringUtils.countOccurrencesOf(sql, "?")!=params.length) {
             throw new DAOException("Nombre d'argument sql différent du nombre de paramètre") ;
@@ -170,7 +170,7 @@ public class SqlTools {
      * @return : L'identifiant de l'élément inséré
      * @throws DAOException
      */
-    public <T> int insertBean(String sqlTable, BeanToResultSet<T> mapper, T bean) throws DAOException  {
+    protected <T> int insertBean(String sqlTable, BeanToResultSet<T> mapper, T bean) throws DAOException  {
         ResultSet resultSet;
         int id = -1 ;
         String sql = "select * from " + sqlTable ;
@@ -208,7 +208,7 @@ public class SqlTools {
      * @param <T> : La classe du javabean
      * @throws DAOException
      */
-    public <T> boolean updateBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... params) throws DAOException {
+    protected <T> boolean updateBean(String sql, BeanToResultSet<T> mapper, T theBean, Object... params) throws DAOException {
         try(
                 Connection connection = newConnection() ;
                 PreparedStatement query = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
@@ -233,7 +233,7 @@ public class SqlTools {
      * @param params : Les paramètres éventuels de la requête
      * @throws DAOException
      */
-    public int deleteBeans(String sql, Object... params) throws DAOException {
+    protected int deleteBeans(String sql, Object... params) throws DAOException {
         int nbDeleted = 0 ;
         try(
                 Connection connection = newConnection() ;

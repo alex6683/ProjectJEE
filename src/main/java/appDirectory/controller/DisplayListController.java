@@ -2,8 +2,8 @@ package appDirectory.controller;
 
 import appDirectory.model.Group;
 import appDirectory.model.Person;
-import appDirectory.web.GroupManager;
-import appDirectory.web.PersonManager;
+import appDirectory.manager.GroupManager;
+import appDirectory.manager.PersonManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

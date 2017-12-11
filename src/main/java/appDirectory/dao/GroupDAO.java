@@ -5,6 +5,15 @@ import appDirectory.model.Group;
 
 import java.util.Collection;
 
+/**
+ * Interface d'accès et manipulation de groupe dans la base de donnée
+ *
+ * @author Mestrallet Alexis
+ * @author Risch Philippe
+ *
+ * @date 19/10/2017
+ * @version 1.0
+ */
 public interface GroupDAO {
 
     /**
@@ -49,7 +58,16 @@ public interface GroupDAO {
     /**
      * Supprime un groupe donnée de la base de donnée
      * @param group : Le groupe à supprimer
+     * @return : le nombre de groupe supprimé
+     * @throws DAOException
      */
     int deleteGroup(Group group) throws DAOException;
+
+    /**
+     * Renvoie un liste de groupes correspondant à un mot clé
+     * @param keyWord : Le mot clé sur lequel la recherche se base
+     * @return : La liste de groupes associé au mot clé
+     */
+    Collection<Group> findGroup(String keyWord) throws DAOException ;
 
 }
